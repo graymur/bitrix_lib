@@ -1,5 +1,7 @@
 <?php
 
+namespace Cpeople\Traits;
+
 trait MultilangFields
 {
     static $sites;

@@ -2,9 +2,9 @@
 
 namespace Cpeople\Classes;
 
-class MultilangDummy extends \Cpeople\Classes\Block\Object
+class MultilangDummy extends Block\Object
 {
-    use \MultilangFields;
+    use \Cpeople\Traits\MultilangFields;
 
     public function getLangTitle()
     {
