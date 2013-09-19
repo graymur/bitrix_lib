@@ -23,7 +23,7 @@ class Getter
     private $arSelectFields = null;
     private $callbacks = array();
     private $resultSetCallback = null;
-    private $className = '\Cpeople\Block\Object';
+    private $className = '\Cpeople\Classes\Block\Object';
 
     private $total;
 
