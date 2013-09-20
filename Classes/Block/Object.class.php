@@ -276,7 +276,7 @@ class Object {
 
         $retval = false;
 
-        if (!empty_array($prop['VALUE'])) {
+        if ((!empty_array($prop['VALUE'])) || (!empty($prop['VALUE']))) {
             $filter = array(
                 'ID' => $prop['VALUE'],
                 'IBLOCK_ID' => $prop['LINK_IBLOCK_ID']
@@ -337,6 +337,8 @@ class Object {
 
     public function getBasePrice($currencyId = 'RUB')
     {
+        \CModule::IncludeModule('catalog');
+
         return \FormatCurrency($this->getBasePriceRawValue(), $currencyId);
     }
 
