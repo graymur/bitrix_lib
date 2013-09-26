@@ -6,6 +6,7 @@ class Object
 {
     private $data;
     private $thumbFunc = 'cp_get_thumb_url';
+    protected $imagesSrc;
 
     public function __construct($data = array())
     {
@@ -41,6 +42,11 @@ class Object
     public function escaped($name)
     {
         return htmlspecialchars($this->{$name});
+    }
+
+    public function hasProp($propName)
+    {
+        return !empty($this->data[$propName]) && is_array($this->data[$propName]);
     }
 
     private function getImageId($key)
