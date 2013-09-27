@@ -4,31 +4,31 @@ namespace Cpeople;
 
 class paging
 {
-    var $self;              #   link at self
-    var $pagesize;
-    var $page;              #   current page;
-    var $total;             #   total pages count
-    var $pagingBar;         #   string to display
-    var $title;             #   title before paging bar
-    var $format;
-    var $total_pages;
-    var $next               = '';
-    var $next_inactive      = '';
-    var $previous           = '';
-    var $previous_inactive  = '';
-    var $splitter           = ' ';
-    var $current_template   = '<li><a class="current" href="">%s</a></li>';
-    var $item_template      = '<li><a href="%s">%s</a></li>';
-    var $template           = '%s';
-    var $numbers_template   = '%s';
-    var $template_pages     = '%s';
-    var $zerofill           = false;
-    var $zero_num           = 2;
-    var $display_pages      = 6;
-    var $mode               = 'pages';
-    var $hellip             = ' &hellip; ';
+    public $self;              #   link at self
+    public $pagesize;
+    public $page;              #   current page;
+    public $total;             #   total pages count
+    public $pagingBar;         #   string to display
+    public $title;             #   title before paging bar
+    public $format;
+    public $total_pages;
+    public $next               = '';
+    public $next_inactive      = '';
+    public $previous           = '';
+    public $previous_inactive  = '';
+    public $splitter           = ' ';
+    public $current_template   = '<li><a class="current" href="">%s</a></li>';
+    public $item_template      = '<li><a href="%s">%s</a></li>';
+    public $template           = '%s';
+    public $numbers_template   = '%s';
+    public $template_pages     = '%s';
+    public $zerofill           = false;
+    public $zero_num           = 2;
+    public $display_pages      = 6;
+    public $mode               = 'pages';
+    public $hellip             = ' &hellip; ';
 
-    function paging($page, $total, $size)
+    function __construct($page, $total, $size)
     {
         $this->page     = $page;
         $this->pagesize = $size;
