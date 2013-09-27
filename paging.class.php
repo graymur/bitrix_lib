@@ -1,5 +1,7 @@
 <?php
 
+namespace Cpeople;
+
 class paging
 {
     var $self;              #   link at self

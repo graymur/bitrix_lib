@@ -361,7 +361,7 @@ class Getter
             $this->total = $this->getFoundRows();
         }
 
-        $paging = new \paging($this->arNavStartParams['iNumPage'], $this->total, $this->arNavStartParams['nPageSize']);
+        $paging = new \Cpeople\paging($this->arNavStartParams['iNumPage'], $this->total, $this->arNavStartParams['nPageSize']);
         $paging->setFormat($urlTemplate);
 
         return $paging;
