@@ -24,6 +24,7 @@ class Getter
     private $callbacks = array();
     private $resultSetCallback = null;
     private $className = '\Cpeople\Classes\Block\Object';
+    private $hydrateById = false;
 
     private $total;
 
@@ -36,6 +37,15 @@ class Getter
     static function instance()
     {
         return new self;
+    }
+
+    /**
+     * @return Getter
+     */
+    public function setHydrateById($mode)
+    {
+        $this->hydrateById = (bool) $mode;
+        return $this;
     }
 
     /**
@@ -235,6 +245,8 @@ class Getter
             $resultSet = call_user_func($this->resultSetCallback, $resultSet);
         }
 
+        $key = -1;
+
         while ($obRes = $resultSet->GetNextElement())
         {
             switch ($this->fetchMode)
@@ -260,17 +272,19 @@ class Getter
                 }
             }
 
+            $key = $this->hydrateById ? $element['ID'] : ++$key;
+
             switch ($this->hydrationMode)
             {
                 case self::HYDRATION_MODE_OBJECTS_ARRAY:
                 case self::HYDRATION_MODE_OBJECTS_COLLECTION:
                     $className = $this->className;
-                    $retval[] = new $className($element);
+                    $retval[$key] = new $className($element);
                 break;
 
 
                 default:
-                    $retval[] = $element;
+                    $retval[$key] = $element;
                 break;
             }
         }
