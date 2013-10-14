@@ -246,9 +246,19 @@ class Object {
         return $this->getImageThumb('PREVIEW_PICTURE', $options);
     }
 
+    public function isDateActive()
+    {
+        return $this->getTimestamp('ACTIVE_FROM') < time() && $this->getTimestamp('ACTIVE_TO') > time();
+    }
+
+    public function getTimestamp($key)
+    {
+        return strtotime($this->data[$key]);
+    }
+
     protected function getDate($key, $format)
     {
-        return russian_date($format, strtotime($this->data[$key]));
+        return FormatDate($format, strtotime($this->data[$key]));
     }
 
     public function getActiveFromDate($format)
