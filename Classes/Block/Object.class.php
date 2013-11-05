@@ -139,6 +139,11 @@ class Object {
         return (bool) $this->getImageId($key);
     }
 
+    public function hasFile($key)
+    {
+        return $this->hasImage($key);
+    }
+
     public function getFiles($key)
     {
         $prop = $this->getProp($key);
@@ -186,8 +191,10 @@ class Object {
             throw new \Exception(__CLASS__ . ' with ID ' . $this->id . ' does not have image ' . $key);
         }
 
-        if (empty($this->imagesSrc[$key])) {
-            if ($file = \CFile::GetByID($this->getImageId($key))->GetNext()) {
+        if (empty($this->imagesSrc[$key]))
+        {
+            if ($file = \CFile::GetByID($this->getImageId($key))->GetNext())
+            {
                 $this->imagesSrc[$key] = \CFile::GetFileSRC($file);
             }
         }
@@ -201,6 +208,7 @@ class Object {
         {
             throw new \Exception(__CLASS__ . ' with ID ' . $this->id . ' does not have image ' . $key);
         }
+
         $retval = File::fromId($this->getImageId($key));
         return $retval;
     }
