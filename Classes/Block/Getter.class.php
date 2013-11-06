@@ -2,7 +2,6 @@
 
 namespace Cpeople\Classes\Block;
 
-
 class Getter
 {
     const FETCH_MODE_ALL = 0;

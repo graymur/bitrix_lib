@@ -29,3 +29,5 @@ function __autoload__($className)
         }
     }
 }
+
+\CModule::IncludeModule('iblock');
