@@ -14,12 +14,6 @@ class LocatorIpgeobase extends Locator
      */
     public function locate()
     {
-//        if ($this->ip == '127.0.0.1')
-//        {
-            // debug
-            $this->setIP('91.214.215.254');
-//        }
-
         $header = 'Content-Type:application/x-www-form-urlencoded';
 
         $url = "http://ipgeobase.ru:7020/geo/?ip=$this->ip";
