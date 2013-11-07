@@ -15,7 +15,7 @@ $filepath = BASE_PATH . "/temp/$filename";
 
 @unlink($filepath);
 
-$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(BASE_PATH . '/upload'), RecursiveIteratorIterator::CHILD_FIRST);
+//$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(BASE_PATH . '/upload'), RecursiveIteratorIterator::CHILD_FIRST);
 
 $archive = new PclZip($filepath);
 $archive->add(BASE_PATH . DIRECTORY_SEPARATOR . 'upload', PCLZIP_OPT_REMOVE_PATH, BASE_PATH);

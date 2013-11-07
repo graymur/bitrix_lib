@@ -118,17 +118,17 @@ class Object
 
     public function hasPreviewImage()
     {
-        return $this->hasImage('PREVIEW_IMAGE_SRC');
+        return $this->hasImage('PICTURE');
     }
 
     public function getPreivewImageUrl()
     {
-        return $this->getImageUrl('PREVIEW_IMAGE_SRC');
+        return $this->getImageUrl('PICTURE');
     }
 
     public function getPreviewImageThumb($options)
     {
-        return $this->getImageThumb('PREVIEW_IMAGE_SRC', $options);
+        return $this->getImageThumb('PICTURE', $options);
     }
 
     private function getDate($key, $format)
