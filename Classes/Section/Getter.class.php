@@ -173,6 +173,13 @@ class Getter
     {
         $retval = array();
 
+        if (!is_array($this->arSelectFields))
+        {
+            $this->arSelectFields = array();
+        }
+
+        $this->arSelectFields[] = 'UF_*';
+
         $resultSet = \CIBlockSection::GetList($this->arOrder, $this->arFilter, $this->bIncCnt, $this->arSelectFields, $this->arNavStartParams);
 
         if (isset($this->resultSetCallback))
