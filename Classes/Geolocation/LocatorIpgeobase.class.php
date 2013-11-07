@@ -14,28 +14,34 @@ class LocatorIpgeobase extends Locator
      */
     public function locate()
     {
-        $header = 'Content-Type:application/x-www-form-urlencoded';
-
         $url = "http://ipgeobase.ru:7020/geo/?ip=$this->ip";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, 'Content-Type:application/x-www-form-urlencoded');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
-        $res = curl_exec($ch);
-
-        if (curl_error($ch))
-        {
-            return false;
-        }
-
-        curl_close($ch);
+        $curlResult = curl_exec($ch);
 
         $result = new Result();
 
-        if ($xml = simplexml_load_string($res))
+        try
         {
+            if (curl_error($ch))
+            {
+                throw new \Exception('Error in request, ' . __METHOD__);
+            }
+
+            if (!$xml = simplexml_load_string($curlResult))
+            {
+                throw new \Exception('Bad response, ' . __METHOD__);
+            }
+
+            if ((string) $xml->ip->city == '')
+            {
+                throw new \Exception('Bad XML, ' . __METHOD__);
+            }
+
             $result->setCity((string) $xml->ip->city);
             $result->setCountry((string) $xml->ip->country);
             $result->setRegion((string) $xml->ip->region);
@@ -43,9 +49,9 @@ class LocatorIpgeobase extends Locator
             $result->setLatitude((string) $xml->ip->lat);
             $result->setLongtitude((string) $xml->ip->lng);
         }
-        else
+        catch (\Exception $e)
         {
-            $result->setError('Empty result');
+            $result->setError($e->getMessage());
         }
 
         return $result;
