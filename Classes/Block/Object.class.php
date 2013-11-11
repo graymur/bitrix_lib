@@ -34,6 +34,11 @@ class Object {
         );
     }
 
+    public function unescape($name)
+    {
+        return html_entity_decode($this->{$name});
+    }
+
     public function escape($name)
     {
         return $this->escaped($name);
@@ -74,6 +79,13 @@ class Object {
         $prop = $this->getProp($propName);
 
         return $prop['VALUE'];
+    }
+
+    public function getPropDescription($propName)
+    {
+        $prop = $this->getProp($propName);
+
+        return $prop['DESCRIPTION'];
     }
 
     public function getPropEnumId($propName)
