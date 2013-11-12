@@ -16,7 +16,7 @@ class File
     /**
      * @static
      * @param $id
-     * @return \Cpeople\Block\File
+     * @return \Cpeople\Classes\Block\File
      * @throws \Exception
      */
     static function fromId($id)
