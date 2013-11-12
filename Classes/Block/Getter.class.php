@@ -224,7 +224,9 @@ class Getter
      */
     public function getResult()
     {
-        return \CIBlockElement::GetList(
+        $element = new \CIBlockElement;
+
+        return $element->GetList(
             $this->arOrder,
             $this->arFilter,
             empty($this->arGroupBy) ? null : $this->arGroupBy,
