@@ -1,5 +1,19 @@
 <?php
 
+function dv_rb($die = true)
+{
+    global $APPLICATION;
+
+    $APPLICATION->RestartBuffer();
+
+    call_user_func_array('dv', func_get_args());
+
+    if ($die)
+    {
+        die;
+    }
+}
+
 class Exception404 extends Exception {} ;
 
 function __($key, $special = false)
