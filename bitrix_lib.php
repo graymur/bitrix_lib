@@ -195,6 +195,19 @@ function cp_menu_plain2tree($plainArray)
     return $tree;
 }
 
+function cp_categories_plain2tree(&$resultArray, $plainArray, $parentId)
+{
+    foreach($plainArray as $item)
+    {
+        if ((int) $item['IBLOCK_SECTION_ID'] == $parentId)
+        {
+            $item['CHILDREN'] = array();
+            cp_categories_plain2tree($item['CHILDREN'], $plainArray, $item['ID']);
+            $resultArray[] = $item;
+        }
+    }
+}
+
 function get_iblock_detail_picture_callback($element)
 {
     if ($file = CFile::GetByID($element['DETAIL_PICTURE'])->GetNext())
