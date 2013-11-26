@@ -279,3 +279,19 @@ function cp_current_url($removeQuery = false)
 
     return $url;
 }
+
+function cp_get_iblocks_by_type($type, $filter = array())
+{
+    $retval = array();
+
+    $filter['TYPE'] = $type;
+
+    $res = \CIBlock::GetList(null, $filter);
+
+    while($row = $res->Fetch())
+    {
+        $retval[] = $row;
+    }
+
+    return $retval;
+}
