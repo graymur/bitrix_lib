@@ -31,3 +31,11 @@ function __autoload__($className)
 }
 
 \CModule::IncludeModule('iblock');
+
+\Cpeople\Classes\Cache\Manager::instance()->setCachePath(BASE_PATH . '/temp/cache');
+
+if (isset($_REQUEST['clear_cache']) && $_REQUEST['clear_cache'] == 'Y')
+{
+    \Cpeople\Classes\Cache\Manager::instance()->clear();
+    \Cpeople\Classes\Cache\Manager::instance()->setEnabled(false);
+}
