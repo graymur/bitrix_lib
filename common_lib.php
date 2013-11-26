@@ -504,3 +504,18 @@ function fix_url($url, $add_http = true)
 
     return $add_http ? "http://$url/" : $url;
 }
+
+function truncate_by_words($text, $words = 40, $hellip = '&hellip;')
+{
+    $words_array = preg_split('/\s+/u', strip_tags($text), -1, PREG_SPLIT_NO_EMPTY);
+
+    $slice = array_slice($words_array, 0, $words);
+    $retval = join(' ', $slice);
+
+    if (count($words_array) > count($slice))
+    {
+        $retval .= $hellip;
+    }
+
+    return $retval;
+}
