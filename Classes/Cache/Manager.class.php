@@ -43,7 +43,6 @@ class Manager
 
     public function enabled()
     {
-        return self::$enabled;
         return isset(self::$enabled) ? self::$enabled : (\COption::getOptionString('main', 'component_cache_on', 'Y') == 'Y');
     }
 
