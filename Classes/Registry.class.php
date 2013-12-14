@@ -58,7 +58,7 @@ class Registry
      * @param $path
      * @return Cache\Manager
      */
-    static function getFilesAPCManager($path)
+    static function getAPCCacheManager($path)
     {
         $engine = new Cache\EngineAPC($path);
         $manager = Cache\Manager::instance();
