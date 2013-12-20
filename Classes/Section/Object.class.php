@@ -150,4 +150,9 @@ class Object
     {
         return isset($this->data['DEPTH_LEVEL']) ? $this->data['DEPTH_LEVEL'] : 0;
     }
+
+    public function getSectionPath()
+    {
+        return GetIBlockSectionPath($this->iblock_id, $this->id);
+    }
 }
