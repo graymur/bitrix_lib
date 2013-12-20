@@ -9,6 +9,8 @@ namespace Cpeople\Classes\Catalog;
 
 class Product extends \Cpeople\Classes\Block\Object
 {
+    use \Cpeople\Traits\MultilangFields;
+    
     function getOffers()
     {
         $retval = array();
