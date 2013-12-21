@@ -13,21 +13,17 @@ class Manager
 {
     static $instance;
     static $cachePath;
-    static $enabled;
+    static $enabled = true;
     private $lastCached;
+
+    /**
+     * @var \Cpeople\Classes\Cache\Engine
+     */
+    private $engine;
 
     private function __construct()
     {
-    }
 
-    public function enabled()
-    {
-        return isset(self::$enabled) ? self::$enabled : (\COption::getOptionString('main', 'component_cache_on', 'Y') == 'Y');
-    }
-
-    public function setEnabled($value)
-    {
-        self::$enabled = (bool) $value;
     }
 
     static function instance()
@@ -38,6 +34,21 @@ class Manager
         }
 
         return self::$instance;
+    }
+
+    public function setEngine(\Cpeople\Classes\Cache\Engine $engine)
+    {
+        $this->engine = $engine;
+    }
+
+    public function enabled()
+    {
+        return isset(self::$enabled) ? self::$enabled : (\COption::getOptionString('main', 'component_cache_on', 'Y') == 'Y');
+    }
+
+    public function setEnabled($value)
+    {
+        self::$enabled = (bool) $value;
     }
 
     public function setCachePath($path)
@@ -60,40 +71,13 @@ class Manager
         }
     }
 
-    private function getFileName($cacheId)
-    {
-        return self::$cachePath . DIRECTORY_SEPARATOR . md5($cacheId) . '.php';
-    }
-
     public function valid($cacheId, $ttl = null)
     {
-        $retval = true;
-
-        try
+        if (!$this->enabled())
         {
-            if (!$this->enabled())
-            {
-                throw new \Exception('cache disabled');
-            }
-
-            $file = $this->getFileName($cacheId);
-
-            if (!file_exists($file))
-            {
-                throw new \Exception('file does not exist');
-            }
-
-            if (!empty($ttl) && time() - filemtime($file) > $ttl)
-            {
-                throw new \Exception('too old');
-            }
+            return false;
         }
-        catch (\Exception $e)
-        {
-            $retval = false;
-        }
-
-        return $retval;
+        return $this->engine->valid($cacheId, $ttl);
     }
 
     public function start()
@@ -125,17 +109,14 @@ class Manager
             return false;
         }
 
-        $file = $this->getFileName($cacheId);
-        file_put_contents($file, $data);
-        $this->check(file_exists($file), 'Could not save cache file');
-        chmod($file, 0666);
+        $this->engine->save($cacheId, $data);
     }
 
     public function get($cacheId)
     {
         $this->check($this->valid($cacheId), "Cache with ID $cacheId does not exist");
 
-        return file_get_contents($this->getFileName($cacheId));
+        return $this->engine->get($cacheId);
     }
 
     public function unserialize($cacheId)
@@ -150,18 +131,12 @@ class Manager
 
     public function clear()
     {
-        $objects = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator(self::$cachePath),
-            \RecursiveIteratorIterator::SELF_FIRST
-        );
+        $this->engine->clear();
+    }
 
-        foreach($objects as $name => $object)
-        {
-            if ($object->isFile())
-            {
-                unlink($object->getRealPath());
-            }
-        }
+    public function clearByTag($tag)
+    {
+        $this->engine->clearByTag($tag);
     }
 }
 

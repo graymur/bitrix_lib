@@ -9,8 +9,15 @@ namespace Cpeople\Classes\Catalog;
 
 class Product extends \Cpeople\Classes\Block\Object
 {
+    use \Cpeople\Traits\MultilangFields;
+    
     function getOffers()
     {
+        if (!class_exists('\CCatalogSKU'))
+        {
+            \CModule::IncludeModule('catalog');
+        }
+        
         $retval = array();
 
         $arInfo = \CCatalogSKU::GetInfoByProductIBlock($this->iblock_id);

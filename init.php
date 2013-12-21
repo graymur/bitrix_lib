@@ -18,7 +18,7 @@ function __autoload__($className)
     global $__lib_base__;
     $pathTpl = $__lib_base__ . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.%s.php';
 
-    foreach (array('class', 'trait') as $type)
+    foreach (array('class', 'trait', 'interface') as $type)
     {
         $path = sprintf($pathTpl, $type);
 
@@ -31,11 +31,3 @@ function __autoload__($className)
 }
 
 \CModule::IncludeModule('iblock');
-
-\Cpeople\Classes\Cache\Manager::instance()->setCachePath(BASE_PATH . '/temp/cache');
-
-if (isset($_REQUEST['clear_cache']) && $_REQUEST['clear_cache'] == 'Y')
-{
-    \Cpeople\Classes\Cache\Manager::instance()->clear();
-    \Cpeople\Classes\Cache\Manager::instance()->setEnabled(false);
-}
