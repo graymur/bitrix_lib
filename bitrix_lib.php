@@ -295,3 +295,8 @@ function cp_get_iblocks_by_type($type, $filter = array())
 
     return $retval;
 }
+
+function cp_is_main()
+{
+    return cp_current_url(true) == '/';
+}
