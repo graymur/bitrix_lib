@@ -45,19 +45,22 @@ function dt($time, $format = 'd.m.Y H:i:s')
     }
 }
 
-function format_file_size($size)
+function format_file_size($size,$precision=0)
 {
-    if ($size >= 1262485504)
+    if ($precision==0){
+		$precision=2;
+	}
+	if ($size >= 1262485504)
     {
-        return number_format($size / 1262485504, 2, '.', ' ') . ' Gb';
+        return number_format($size / 1262485504, $precision, '.', ' ') . ' Gb';
     }
     elseif ($size >= 1048576)
     {
-        return number_format($size / 1048576, 2, '.', ' ') . ' Mb';
+        return number_format($size / 1048576, $precision, '.', ' ') . ' Mb';
     }
     elseif ($size >= 1024)
     {
-        return number_format($size / 1024, 2, '.', ' ') . ' kb';
+        return number_format($size / 1024, $precision, '.', ' ') . ' kb';
     }
     else
     {
