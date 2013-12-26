@@ -70,9 +70,9 @@ class File
         return $pathinfo['extension'];
     }
 
-    public function getFileSize()
+    public function getFileSize($precision = 0)
     {
-        return format_file_size($this->data['FILE_SIZE']);
+        return format_file_size($this->data['FILE_SIZE'],$precision);
     }
 
     public function getDescription()
