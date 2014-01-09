@@ -25,13 +25,13 @@ function cp_get_language_message($key, $special = false)
 {
     static $MESS;
 
+    $langFilePath = BASE_PATH . '/bitrix/templates/.default/lang/'.LANGUAGE_ID.'/phrases.php';
+
     if (!isset($MESS))
     {
-        $path = BASE_PATH . '/bitrix/templates/.default/lang/'.LANGUAGE_ID.'/phrases.php';
-
-        if (file_exists($path))
+        if (file_exists($langFilePath))
         {
-            require $path;
+            require $langFilePath;
         }
     }
 
@@ -43,6 +43,23 @@ function cp_get_language_message($key, $special = false)
     }
     else
     {
+        if (!file_exists($langFilePath))
+        {
+            @mkdir(dirname($langFilePath), 0777, true);
+            @touch($langFilePath, 0666);
+            file_put_contents($langFilePath, "<?\n\$MESS = array(\n);");
+        }
+
+        if (file_exists($langFilePath) && ($content = file_get_contents($langFilePath)))
+        {
+            $string = "'" . addslashes($key) . "'";
+            $content = str_replace('?>', '', $content);
+            $content = str_replace(');', "    $string => $string,\n);", $content);
+            file_put_contents($langFilePath, $content);
+
+            require $langFilePath;
+        }
+
         $missingFile = BASE_PATH . '/temp/missing_messages.txt';
 
         $missing = @file($missingFile);
