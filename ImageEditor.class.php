@@ -219,7 +219,14 @@ class ImageEditorGD
     {
         $image = $this->createEmptyImage($width, $height);
 
-        imagefill($image, 0, 0, imagecolorallocate($image, $bgColor[0], $bgColor[1], $bgColor[2]));
+        if ($this->format != 'png' && $this->format != 'gif')
+        {
+            imagefill($image, 0, 0, imagecolorallocate($image, $bgColor[0], $bgColor[1], $bgColor[2]));
+        }
+        else
+        {
+            imagefill($image, 0, 0, imagecolorallocatealpha($image, 0, 0, 0, 127));
+        }
 
         $ratio = $this->currentWidth / $this->currentHeight;
 
@@ -240,9 +247,7 @@ class ImageEditorGD
             $yOffset = 0;
         }
 
-        $insert = imagecreatetruecolor($newWidth, $newHeight);
-        imagecopyresampled($insert, $this->sourceImage,0,0,0,0,$newWidth,$newHeight,$this->currentWidth,$this->currentHeight);
-        imagecopymerge($image,$insert,$xOffset,$yOffset,0,0,$newWidth,$newHeight,100);
+        imagecopyresampled($image, $this->sourceImage, $xOffset, $yOffset, 0, 0, $newWidth, $newHeight, $this->currentWidth, $this->currentHeight);
 
         $this->setSourceImage($image);
 
@@ -438,8 +443,8 @@ class ImageEditorGD
             : imagecreate($width, $height)
         ;
 
-        imagealphablending( $image, false );
-        imagesavealpha( $image, true );
+        imagealphablending($image, true);
+        imagesavealpha($image, true);
 
         return $image;
     }
