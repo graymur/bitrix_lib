@@ -79,4 +79,9 @@ class File
     {
         return $this->data['DESCRIPTION'];
     }
+
+    public function getFileName()
+    {
+        return $this->data['FILE_NAME'];
+    }
 }
