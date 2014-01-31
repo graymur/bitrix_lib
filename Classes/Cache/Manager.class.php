@@ -77,6 +77,7 @@ class Manager
         {
             return false;
         }
+
         return $this->engine->valid($cacheId, $ttl);
     }
 
@@ -114,7 +115,7 @@ class Manager
 
     public function get($cacheId)
     {
-        $this->check($this->valid($cacheId), "Cache with ID $cacheId does not exist");
+//        $this->check($this->valid($cacheId), "Cache with ID $cacheId does not exist");
 
         return $this->engine->get($cacheId);
     }

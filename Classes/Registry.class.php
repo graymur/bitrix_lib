@@ -66,4 +66,12 @@ class Registry
 
         return $manager;
     }
+
+    static function bitrixCacheEnabled()
+    {
+        $component = \COption::GetOptionString('main', 'component_cache_on', 'N');
+        $managed = \COption::GetOptionString('main', 'component_managed_cache_on', 'N');
+
+        return $component == 'Y' && $managed == 'Y';
+    }
 }

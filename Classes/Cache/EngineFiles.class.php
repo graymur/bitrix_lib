@@ -27,7 +27,7 @@ class EngineFiles implements Engine
         return $this->path . DIRECTORY_SEPARATOR . md5($cacheId) . '.txt';
     }
 
-    public function valid($cacheId, $ttl)
+    public function valid($cacheId, $ttl = null)
     {
         $retval = true;
 
@@ -40,7 +40,12 @@ class EngineFiles implements Engine
                 throw new CacheException('file does not exist');
             }
 
-            if (!empty($ttl) && time() - filemtime($file) > $ttl)
+//            if (empty($ttl))
+//            {
+//                throw new CacheException('Cache TTL = 0');
+//            }
+
+            if ($ttl == null && time() - filemtime($file) > $ttl)
             {
                 throw new CacheException('too old');
             }
