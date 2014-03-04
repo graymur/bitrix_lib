@@ -411,4 +411,10 @@ class Object {
         $element = new \CIBlockElement;
         $element->Update($this->id, $values);
     }
+
+    public function add($values)
+    {
+        $element = new \CIBlockElement;
+        $element->Add($values);
+    }
 }
