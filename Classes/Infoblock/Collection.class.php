@@ -1,11 +1,10 @@
 <?php
 
-namespace Cpeople\Classes\Block;
+namespace Cpeople\Classes\Infoblock;
 
 
 class Collection implements \Countable, \ArrayAccess, \SeekableIterator
 {
-    protected $list;
     protected $length = 0;
 
     public function __construct($list = array())
