@@ -440,42 +440,53 @@ class Object {
 
     public function save()
     {
-        if(!$this->IBLOCK_ID)
+        if (!$this->IBLOCK_ID)
         {
             throw new \Exception('IBLOCK_ID is not set');
         }
 
         $arPropsConf = cp_get_ib_properties($this->IBLOCK_ID);
 
-        $arFields = array();
-        $arProps = array();
-        foreach($this->data as $key=>$val)
+        $arFields = $arProps = array();
+
+        foreach ($this->data as $key=>$val)
         {
-            if(cp_is_standard_field($key))
+            if (cp_is_standard_field($key))
             {
                 $arFields[$key] = $val;
             }
             else
             {
-                if(isset($arPropsConf[$key]))
+                if (isset($arPropsConf[$key]))
                 {
-                    if(is_array($val) && isset($val["VALUE"]))
+                    if (is_array($val) && isset($val["VALUE"]))
                     {
                        $val = $val["VALUE"];
                     }
+
                     $propConf = $arPropsConf[$key];
+
                     switch($propConf['PROPERTY_TYPE'])
                     {
-                    case "S": $arProps[$key] = ($propConf['USER_TYPE'] == 'HTML')
-                        ? array("VALUE" => array("TEXT"=>$val, "TYPE"=>(strip_tags($val) == $val ? 'TEXT' : 'HTML')))
-                        : $val; break;
-                    default: $arProps[$key] = $val;
+                        case "S":
+
+                            $arProps[$key] = ($propConf['USER_TYPE'] == 'HTML')
+                                ? array("VALUE" => array("TEXT" => $val, "TYPE" => (strip_tags($val) == $val ? 'TEXT' : 'HTML')))
+                                : $val;
+
+                        break;
+
+                        default:
+
+                            $arProps[$key] = $val;
+
+                        break;
                     }
                 }
             }
         }
 
-        if($this->id)
+        if ($this->id)
         {
             $this->update($arFields);
         }
@@ -484,7 +495,7 @@ class Object {
             $this->add($arFields);
         }
 
-        if(intval($this->id))
+        if (intval($this->id))
         {
             \CIBlockElement::SetPropertyValuesEx($this->id, $this->IBLOCK_ID, $arProps);
         }

@@ -336,11 +336,12 @@ function cp_get_ib_properties($IBlockId)
 
 function cp_is_standard_field($fieldName)
 {
-    $arStandardFields = array('ID', 'CODE', 'EXTERNAL_ID', 'XML_ID', 'NAME',
+    static $arStandardFields = array('ID', 'CODE', 'EXTERNAL_ID', 'XML_ID', 'NAME',
         'IBLOCK_ID', 'IBLOCK_SECTION_ID',
         'ACTIVE', 'DATE_ACTIVE_FROM', 'DATE_ACTIVE_TO',
         'SORT', 'PREVIEW_PICTURE', 'PREVIEW_TEXT', 'PREVIEW_TEXT_TYPE',
         'DETAIL_PICTURE', 'DETAIL_TEXT', 'DETAIL_TEXT_TYPE',
         'MODIFIED_BY', 'TAGS');
+
     return in_array($fieldName, $arStandardFields);
 }
