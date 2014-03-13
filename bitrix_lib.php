@@ -318,7 +318,7 @@ function cp_is_main()
     return cp_current_url(true) == SITE_URL;
 }
 
-function getIBProperties($IBlockId)
+function cp_get_ib_properties($IBlockId)
 {
     static $result = array();
     if(!isset($result[$IBlockId]))

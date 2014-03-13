@@ -409,21 +409,22 @@ class Object {
     public function update($values)
     {
         $element = new \CIBlockElement;
-        return $element->Update($this->id, $values);
+        if(!$id = $element->Update($this->id, $values))
+        {
+            throw new \Exception("Can't update element: ".$element->LAST_ERROR);
+        }
+        return $this;
     }
 
     public function add($values)
     {
         $element = new \CIBlockElement;
-        if($id = $element->Add($values))
-        {
-            $this->setVal('id', $id);
-        }
-        else
+        if(!$id = $element->Add($values))
         {
             throw new \Exception("Can't add element: ".$element->LAST_ERROR);
         }
-        return $id;
+        $this->setVal('id', $id);
+        return $this;
     }
 
     public function setVal($name, $val)
@@ -444,7 +445,7 @@ class Object {
             throw new \Exception('IBLOCK_ID is not set');
         }
 
-        $arPropsConf = getIBProperties($this->IBLOCK_ID);
+        $arPropsConf = cp_get_ib_properties($this->IBLOCK_ID);
 
         $arFields = array();
         $arProps = array();
@@ -468,24 +469,24 @@ class Object {
                     case "S": $arProps[$key] = ($propConf['USER_TYPE'] == 'HTML')
                         ? array("VALUE" => array("TEXT"=>$val, "TYPE"=>(strip_tags($val) == $val ? 'TEXT' : 'HTML')))
                         : $val; break;
-                    //TODO: добавить еще типов свойств
                     default: $arProps[$key] = $val;
                     }
                 }
             }
         }
-        $arFields["PROPERTY_VALUES"] = $arProps;
 
         if($this->id)
         {
-            if(!$this->update($arFields))
-            {
-                throw new \Exception("Can't update element");
-            }
+            $this->update($arFields);
         }
         else
         {
-            $this->id = $this->add($arFields);
+            $this->add($arFields);
+        }
+
+        if(intval($this->id))
+        {
+            \CIBlockElement::SetPropertyValuesEx($this->id, $this->IBLOCK_ID, $arProps);
         }
 
         return $this;
