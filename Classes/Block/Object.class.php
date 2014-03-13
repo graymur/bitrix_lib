@@ -409,12 +409,85 @@ class Object {
     public function update($values)
     {
         $element = new \CIBlockElement;
-        $element->Update($this->id, $values);
+        return $element->Update($this->id, $values);
     }
 
     public function add($values)
     {
         $element = new \CIBlockElement;
-        $element->Add($values);
+        if($id = $element->Add($values))
+        {
+            $this->setVal('id', $id);
+        }
+        else
+        {
+            throw new \Exception("Can't add element: ".$element->LAST_ERROR);
+        }
+        return $id;
+    }
+
+    public function setVal($name, $val)
+    {
+        $this->data[strtoupper($name)] = $val;
+        return $this;
+    }
+
+    public function hasVal($name)
+    {
+        return isset($this->data[strtoupper($name)]);
+    }
+
+    public function save()
+    {
+        if(!$this->IBLOCK_ID)
+        {
+            throw new \Exception('IBLOCK_ID is not set');
+        }
+
+        $arPropsConf = getIBProperties($this->IBLOCK_ID);
+
+        $arFields = array();
+        $arProps = array();
+        foreach($this->data as $key=>$val)
+        {
+            if(cp_is_standard_field($key))
+            {
+                $arFields[$key] = $val;
+            }
+            else
+            {
+                if(isset($arPropsConf[$key]))
+                {
+                    if(is_array($val) && isset($val["VALUE"]))
+                    {
+                       $val = $val["VALUE"];
+                    }
+                    $propConf = $arPropsConf[$key];
+                    switch($propConf['PROPERTY_TYPE'])
+                    {
+                    case "S": $arProps[$key] = ($propConf['USER_TYPE'] == 'HTML')
+                        ? array("VALUE" => array("TEXT"=>$val, "TYPE"=>(strip_tags($val) == $val ? 'TEXT' : 'HTML')))
+                        : $val; break;
+                    //TODO: добавить еще типов свойств
+                    default: $arProps[$key] = $val;
+                    }
+                }
+            }
+        }
+        $arFields["PROPERTY_VALUES"] = $arProps;
+
+        if($this->id)
+        {
+            if(!$this->update($arFields))
+            {
+                throw new \Exception("Can't update element");
+            }
+        }
+        else
+        {
+            $this->id = $this->add($arFields);
+        }
+
+        return $this;
     }
 }
