@@ -191,7 +191,7 @@ function cp_language_text($key)
 
 function cp_bitrix_sessid_post($varname='sessid')
 {
-	return preg_replace('/id\=".*"/isxU', '', bitrix_sessid_post($varname));
+    return preg_replace('/id\=".*"/isxU', '', bitrix_sessid_post($varname));
 }
 
 function cp_menu_plain2tree($plainArray)
@@ -316,4 +316,31 @@ function cp_get_iblocks_by_type($type, $filter = array())
 function cp_is_main()
 {
     return cp_current_url(true) == SITE_URL;
+}
+
+function getIBProperties($IBlockId)
+{
+    static $result = array();
+    if(!isset($result[$IBlockId]))
+    {
+        $rs = CIBlockProperty::GetList(array('sort'=>'asc'), array('IBLOCK_ID'=>$IBlockId));
+        while($ar = $rs->Fetch())
+        {
+            $result[$IBlockId][$ar['ID']] = $ar;
+            $result[$IBlockId][$ar['CODE']] = $ar;
+        }
+    }
+
+    return $result[$IBlockId];
+}
+
+function cp_is_standard_field($fieldName)
+{
+    $arStandardFields = array('ID', 'CODE', 'EXTERNAL_ID', 'XML_ID', 'NAME',
+        'IBLOCK_ID', 'IBLOCK_SECTION_ID',
+        'ACTIVE', 'DATE_ACTIVE_FROM', 'DATE_ACTIVE_TO',
+        'SORT', 'PREVIEW_PICTURE', 'PREVIEW_TEXT', 'PREVIEW_TEXT_TYPE',
+        'DETAIL_PICTURE', 'DETAIL_TEXT', 'DETAIL_TEXT_TYPE',
+        'MODIFIED_BY', 'TAGS');
+    return in_array($fieldName, $arStandardFields);
 }
