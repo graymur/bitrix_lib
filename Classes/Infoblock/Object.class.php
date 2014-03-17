@@ -2,36 +2,19 @@
 
 namespace Cpeople\Classes\Infoblock;
 
-class Object {
-
-    protected $data;
+class Object extends \Cpeople\Classes\Base\Object
+{
     protected $properties;
     protected $fields;
 
-    public function __construct($data = array())
-    {
-        if (!is_array($data))
-        {
-            throw new \Exception('Argument should be an array to ' . __METHOD__);
-        }
-
-        $this->data = $data;
-    }
-
-    public function __get($name)
-    {
-        if (isset($this->data[strtoupper($name)]))
-        {
-            return $this->data[strtoupper($name)];
-        }
-
-        $trace = debug_backtrace();
-        trigger_error(
-            'Undefined property in __get(): ' . $name .
-            ' in file ' . $trace[0]['file'] .
-            ' line ' . $trace[0]['line'], E_USER_NOTICE
-        );
-    }
+    static $standardFields = array(
+        'ID', 'CODE', 'EXTERNAL_ID', 'XML_ID', 'NAME',
+        'IBLOCK_ID', 'IBLOCK_SECTION_ID',
+        'ACTIVE', 'DATE_ACTIVE_FROM', 'DATE_ACTIVE_TO',
+        'SORT', 'PREVIEW_PICTURE', 'PREVIEW_TEXT', 'PREVIEW_TEXT_TYPE',
+        'DETAIL_PICTURE', 'DETAIL_TEXT', 'DETAIL_TEXT_TYPE',
+        'MODIFIED_BY', 'TAGS'
+    );
 
     public function getProperties()
     {
@@ -61,6 +44,14 @@ class Object {
             foreach ($res as $k => $element)
             {
                 $this->fields[$k] = new Field($k, $element);
+            }
+
+            foreach (self::$standardFields as $field)
+            {
+                if (!array_key_exists($field, $this->fields))
+                {
+                    $this->fields[$field] = array('CODE' => $field);
+                }
             }
         }
 

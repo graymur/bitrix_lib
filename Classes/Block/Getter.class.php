@@ -2,32 +2,14 @@
 
 namespace Cpeople\Classes\Block;
 
-class Getter
+class Getter extends \Cpeople\Classes\Base\Getter
 {
-    const FETCH_MODE_ALL = 0;
-    const FETCH_MODE_FIELDS = 1;
-    const FETCH_MODE_PROPERTIES = 2;
-    const FETCH_MODE_FETCH = 3;
+    protected $arGroupBy = null;
+    protected $arNavStartParams = null;
+    protected $arSelectFields = null;
+    protected $className = '\Cpeople\Classes\Block\Object';
 
-    const HYDRATION_MODE_ARRAY = 0;
-    const HYDRATION_MODE_OBJECTS_ARRAY = 1;
-    const HYDRATION_MODE_OBJECTS_COLLECTION = 2;
-
-    private $fetchMode = self::FETCH_MODE_ALL;
-    private $hydrationMode = self::HYDRATION_MODE_OBJECTS_ARRAY;
-    private $arOrder = array('SORT' => 'asc');
-    private $arFilter = null;
-    private $arGroupBy = null;
-    private $arNavStartParams = null;
-    private $arSelectFields = null;
-    private $callbacks = array();
-    private $resultSetCallback = null;
-    private $className = '\Cpeople\Classes\Block\Object';
-    private $hydrateById = false;
-
-    private $total;
-
-    private function __construct() {}
+    protected $total;
 
     /**
      * @static
@@ -36,73 +18,6 @@ class Getter
     static function instance()
     {
         return new self;
-    }
-
-    /**
-     * @return Getter
-     */
-    public function setHydrateById($mode)
-    {
-        $this->hydrateById = (bool) $mode;
-        return $this;
-    }
-
-    /**
-     * @return Getter
-     */
-    public function setFetchMode($mode)
-    {
-        $this->fetchMode = (int) $mode;
-        return $this;
-    }
-
-    /**
-     * @return Getter
-     */
-    public function setOrder($arOrder)
-    {
-        $this->arOrder = $arOrder;
-        return $this;
-    }
-
-    /**
-     * @return Getter
-     */
-    public function setFilter($arFilter)
-    {
-        $this->arFilter = $arFilter;
-        return $this;
-    }
-
-    /**
-     * @return Getter
-     */
-    public function addFilter()
-    {
-        $args = func_get_args();
-
-        if (!is_array($this->arFilter))
-        {
-            $this->arFilter = array();
-        }
-
-        if (count($args) == 1 && is_array($args[0]))
-        {
-            foreach ($args[0] as $k => $v)
-            {
-                $this->arFilter[$k] = $v;
-            }
-        }
-        else if (count($args) == 2)
-        {
-            $this->arFilter[$args[0]] = $args[1];
-        }
-        else
-        {
-            throw new \Exception('Wrong arguments count or type for ' . __METHOD__);
-        }
-
-        return $this;
     }
 
     /**
@@ -192,34 +107,6 @@ class Getter
     }
 
     /**
-     * @return Getter
-     */
-    public function setHydrationMode($mode)
-    {
-        $this->hydrationMode = $mode;
-        return $this;
-    }
-
-    /**
-     * @return Getter
-     */
-    public function setClassName($className)
-    {
-        if (!class_exists($className))
-        {
-            throw new \Exception("Class $className doest not exist, " . __METHOD__);
-        }
-
-//        if (is_subclass_of($className, '\Cpeople\Block\Object'))
-//        {
-//            throw new \Exception("Class $className does not extend \Cpeople\Block\Object");
-//        }
-
-        $this->className = $className;
-        return $this;
-    }
-
-    /**
      * @return \CDBResult|\CIBlockResult|mixed|string
      */
     public function getResult()
@@ -296,28 +183,6 @@ class Getter
         }
 
         return $retval;
-    }
-
-    /**
-     * @return Object
-     */
-    public function getOne()
-    {
-        $retval = $this->get();
-        return empty($retval) ? false : $retval[0];
-    }
-
-    /**
-     * @return Object
-     */
-    public function getById($id)
-    {
-        return $this->setHydrationMode(self::HYDRATION_MODE_OBJECTS_ARRAY)->addFilter('ID', $id)->getOne();
-    }
-
-    public function getArrayById($id)
-    {
-        return $this->setHydrationMode(self::HYDRATION_MODE_ARRAY)->addFilter('ID', $id)->getOne();
     }
 
     /**

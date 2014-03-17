@@ -2,52 +2,11 @@
 
 namespace Cpeople\Classes\Block;
 
-class Object {
-
-    protected $data;
+class Object extends \Cpeople\Classes\Base\Object
+{
     protected $thumbFunc = 'cp_get_thumb_url';
     protected $imagesSrc;
     protected $related;
-
-    public function __construct($data = array())
-    {
-        if (!is_array($data))
-        {
-            throw new \Exception('Argument should be an array to ' . __METHOD__);
-        }
-
-        $this->data = $data;
-    }
-
-    public function __get($name)
-    {
-        if (isset($this->data[strtoupper($name)]))
-        {
-            return $this->data[strtoupper($name)];
-        }
-
-        $trace = debug_backtrace();
-        trigger_error(
-            'Undefined property in __get(): ' . $name .
-                ' in file ' . $trace[0]['file'] .
-                ' line ' . $trace[0]['line'], E_USER_NOTICE
-        );
-    }
-
-    public function unescape($name)
-    {
-        return html_entity_decode($this->{$name});
-    }
-
-    public function escape($name)
-    {
-        return $this->escaped($name);
-    }
-
-    public function escaped($name)
-    {
-        return htmlspecialchars($this->{$name});
-    }
 
     public function getSectionId()
     {
@@ -409,20 +368,24 @@ class Object {
     public function update($values)
     {
         $element = new \CIBlockElement;
+
         if(!$id = $element->Update($this->id, $values))
         {
             throw new \Exception("Can't update element: ".$element->LAST_ERROR);
         }
+
         return $this;
     }
 
     public function add($values)
     {
         $element = new \CIBlockElement;
-        if(!$id = $element->Add($values))
+
+        if (!$id = $element->Add($values))
         {
-            throw new \Exception("Can't add element: ".$element->LAST_ERROR);
+            throw new \Exception("Can't add element: " . $element->LAST_ERROR);
         }
+
         $this->setVal('id', $id);
         return $this;
     }
@@ -445,9 +408,44 @@ class Object {
             throw new \Exception('IBLOCK_ID is not set');
         }
 
-        $arPropsConf = cp_get_ib_properties($this->IBLOCK_ID);
+        $blockFields = \Cpeople\Classes\Infoblock\Getter::instance()->getById($this->IBLOCK_ID)->getFields();
+        $blockProperties = \Cpeople\Classes\Infoblock\Getter::instance()->getById($this->IBLOCK_ID)->getProperties();
 
         $arFields = $arProps = array();
+
+        foreach ($this->data as $key => $value)
+        {
+            if (array_key_exists($key, $blockFields))
+            {
+                $arFields[$key] = $value;
+            }
+            else if (array_key_exists($key, $blockProperties))
+            {
+                if (is_array($value) && isset($value['VALUE']))
+                {
+                    $value = $value['VALUE'];
+                }
+
+                switch($blockProperties[$key]->property_type)
+                {
+                    case 'S':
+
+                        $arProps[$key] = ($blockProperties[$key]->user_type == 'HTML')
+                            ? array('VALUE' => array('TEXT' => $value, "TYPE" => (strip_tags($val) == $value ? 'TEXT' : 'HTML')))
+                            : $value;
+
+                        break;
+
+                    default:
+
+                        $arProps[$key] = $val;
+
+                    break;
+                }
+            }
+        }
+/*
+        $arPropsConf = cp_get_ib_properties($this->IBLOCK_ID);
 
         foreach ($this->data as $key=>$val)
         {
@@ -485,6 +483,7 @@ class Object {
                 }
             }
         }
+*/
 
         if ($this->id)
         {

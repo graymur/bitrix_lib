@@ -27,4 +27,4 @@ abstract class AbstractDecorator
 
         throw new \Exception("Method $methodName is not implemented in " . __CLASS__);
     }
-} 
+}

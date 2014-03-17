@@ -2,21 +2,10 @@
 
 namespace Cpeople\Classes\Section;
 
-class Object
+class Object extends \Cpeople\Classes\Base\Object
 {
-    private $data;
     private $thumbFunc = 'cp_get_thumb_url';
     protected $imagesSrc;
-
-    public function __construct($data = array())
-    {
-        if (!is_array($data))
-        {
-            throw new \Exception('Argument should be an array to ' . __METHOD__);
-        }
-
-        $this->data = $data;
-    }
 
     public function __get($name)
     {
@@ -32,16 +21,6 @@ class Object
                 ' line ' . $trace[0]['line'],
             E_USER_NOTICE
         );
-    }
-
-    public function escape($name)
-    {
-        return $this->escaped($name);
-    }
-
-    public function escaped($name)
-    {
-        return htmlspecialchars($this->{$name});
     }
 
     public function hasProp($propName)
@@ -153,6 +132,6 @@ class Object
 
     public function getSectionPath()
     {
-        return GetIBlockSectionPath($this->iblock_id, $this->id);
+        return \GetIBlockSectionPath($this->iblock_id, $this->id);
     }
 }
