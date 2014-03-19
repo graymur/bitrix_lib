@@ -9,6 +9,8 @@
 namespace Cpeople\Classes\Base;
 
 
+use Bitrix\Main\DB\Exception;
+
 abstract class Getter
 {
     const FETCH_MODE_ALL = 0;
@@ -32,6 +34,25 @@ abstract class Getter
     protected function __construct() {}
 
     static $resultCache;
+
+    /**
+     * @var \Cpeople\Classes\Cache\Manager
+     */
+    protected $cacheManager;
+    protected $cacheId;
+
+    public function setCacheManager(\Cpeople\Classes\Cache\Manager $manager)
+    {
+        $this->cacheManager = $manager;
+        return $this;
+    }
+
+    public function setCacheId($cacheId)
+    {
+        $this->cacheId = $cacheId;
+        return $this;
+    }
+
     /**
      * @return Getter
      */
@@ -190,19 +211,34 @@ abstract class Getter
         return $this->getOne();
     }
 
-    protected function getCacheId()
+    public function getCacheId()
     {
-        return md5(print_r($this, true));
+        return empty($this->cacheId) ? md5(serialize(get_object_vars($this))) : $this->cacheId;
     }
 
     protected function cacheResult($result)
     {
-        self::$resultCache[$this->getCacheId()] = $result;
+        $this->cacheManager->save($this->getCacheId(), $result);
     }
 
     protected function getCachedResult()
     {
-        $cacheId = $this->getCacheId();
-        return isset(self::$resultCache[$cacheId]) ?  self::$resultCache[$cacheId] : false;
+        $retval = false;
+
+        try
+        {
+            if (!$this->cacheManager)
+            {
+                throw new Exception;
+            }
+
+            $retval = $this->cacheManager->get($this->getCacheId());
+        }
+        catch (Exception $e)
+        {
+
+        }
+
+        return $retval;
     }
 }

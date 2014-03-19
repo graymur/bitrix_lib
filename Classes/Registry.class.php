@@ -67,11 +67,25 @@ class Registry
         return $manager;
     }
 
+    /**
+     * @param $path
+     * @return Cache\Manager
+     */
+    static function getMemcacheManager($options = array())
+    {
+        $engine = new Cache\EngineMemcached($options);
+        $engine->setTTL(COMPONENTS_CACHE_TTL);
+        $manager = Cache\Manager::instance();
+        $manager->setEngine($engine);
+
+        return $manager;
+    }
+
     static function bitrixCacheEnabled()
     {
         $component = \COption::GetOptionString('main', 'component_cache_on', 'N');
         $managed = \COption::GetOptionString('main', 'component_managed_cache_on', 'N');
 
-        return $component == 'Y' && $managed == 'Y';
+        return $component == 'Y'/* && $managed == 'Y'*/;
     }
 }

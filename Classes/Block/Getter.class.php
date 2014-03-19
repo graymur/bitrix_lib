@@ -124,6 +124,12 @@ class Getter extends \Cpeople\Classes\Base\Getter
 
     public function get()
     {
+        if (\Cpeople\Classes\Registry::bitrixCacheEnabled() && ($retval = $this->getCachedResult()))
+        {
+            echo 'cached';
+            return $retval;
+        }
+
         $retval = array();
 
         $resultSet = $this->getResult();
@@ -181,6 +187,9 @@ class Getter extends \Cpeople\Classes\Base\Getter
         {
             $retval = new Collection($retval);
         }
+
+
+        $this->cacheResult($retval);
 
         return $retval;
     }
