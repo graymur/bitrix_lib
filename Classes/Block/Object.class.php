@@ -5,7 +5,7 @@ namespace Cpeople\Classes\Block;
 class Object extends \Cpeople\Classes\Base\Object
 {
     protected $thumbFunc = 'cp_get_thumb_url';
-    protected $imagesSrc;
+    protected $imagesSrc = array();
     protected $related;
 
     public function getSectionId()
