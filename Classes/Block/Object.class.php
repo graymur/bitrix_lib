@@ -431,14 +431,14 @@ class Object extends \Cpeople\Classes\Base\Object
                     case 'S':
 
                         $arProps[$key] = ($blockProperties[$key]->user_type == 'HTML')
-                            ? array('VALUE' => array('TEXT' => $value, "TYPE" => (strip_tags($val) == $value ? 'TEXT' : 'HTML')))
+                            ? array('VALUE' => array('TEXT' => $value, "TYPE" => (strip_tags($value) == $value ? 'TEXT' : 'HTML')))
                             : $value;
 
                         break;
 
                     default:
 
-                        $arProps[$key] = $val;
+                        $arProps[$key] = $value;
 
                     break;
                 }
