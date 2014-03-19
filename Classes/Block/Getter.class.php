@@ -188,8 +188,10 @@ class Getter extends \Cpeople\Classes\Base\Getter
             $retval = new Collection($retval);
         }
 
-
-        $this->cacheResult($retval);
+        if (\Cpeople\Classes\Registry::bitrixCacheEnabled())
+        {
+            $this->cacheResult($retval);
+        }
 
         return $retval;
     }

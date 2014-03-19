@@ -218,6 +218,7 @@ abstract class Getter
 
     protected function cacheResult($result)
     {
+        if (!$this->cacheManager) return false;
         $this->cacheManager->save($this->getCacheId(), $result);
     }
 
