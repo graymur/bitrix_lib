@@ -265,13 +265,12 @@ class Object extends \Cpeople\Classes\Base\Object
 
         $retval = false;
 
-        if ((!empty_array($prop['VALUE'])) || (!empty($prop['VALUE']))) {
-            $filter = array(
+        if (!empty_array($prop['VALUE']) || !empty($prop['VALUE']))
+        {
+            $retval = Getter::instance()->setFilter(array(
                 'ID' => $prop['VALUE'],
-                'IBLOCK_ID' => $prop['LINK_IBLOCK_ID']
-            );
-
-            $retval = Getter::instance()->setFilter($filter);
+//                'IBLOCK_ID' => $prop['LINK_IBLOCK_ID']
+            ));
         }
 
         return $retval;
