@@ -61,6 +61,12 @@ class EngineFiles implements Engine
     public function save($cacheId, $data)
     {
         $file = $this->getFileName($cacheId);
+
+        if (gettype($data) != 'srting')
+        {
+            $data = serialize($data);
+        }
+
         file_put_contents($file, $data);
 //        $this->check(file_exists($file), 'Could not save cache file');
         chmod($file, 0666);
@@ -68,7 +74,14 @@ class EngineFiles implements Engine
 
     public function get($cacheId)
     {
-        return file_get_contents($this->getFileName($cacheId));
+        $retval = file_get_contents($this->getFileName($cacheId));
+
+        if (strpos($retval, 'a:') === 0)
+        {
+            $retval = unserialize($retval);
+        }
+
+        return $retval;
     }
 
     public function clear()

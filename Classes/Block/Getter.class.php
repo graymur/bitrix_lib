@@ -126,7 +126,6 @@ class Getter extends \Cpeople\Classes\Base\Getter
     {
         if (\Cpeople\Classes\Registry::bitrixCacheEnabled() && ($retval = $this->getCachedResult()))
         {
-            echo 'cached';
             return $retval;
         }
 
