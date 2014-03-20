@@ -114,7 +114,7 @@ function cp_get_thumb_url($url, $options = array())
 {
     if (!empty($options))
     {
-        $url_part = '/' . basename(IMG_CACHE_PATH) . '/';
+        $url_part = '/';
 
         foreach ($options as $k => $v)
         {
@@ -124,6 +124,8 @@ function cp_get_thumb_url($url, $options = array())
         $url_part = trim($url_part, '-');
 
         $url = $url_part . '/' . trim($url, '/');
+
+        $url = '/' . basename(IMG_CACHE_PATH) . $url . '?' . cp_thumb_url_hash($url);
     }
 
     return $url;

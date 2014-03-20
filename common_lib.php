@@ -522,3 +522,12 @@ function truncate_by_words($text, $words = 40, $hellip = '&hellip;')
 
     return $retval;
 }
+
+function cp_thumb_url_hash($string)
+{
+    $hash = md5(sha1(md5(mb_strtoupper(trim($string, '/')))));
+
+    $hash = substr($hash, 4, 8);
+
+    return $hash;
+}

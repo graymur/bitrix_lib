@@ -40,7 +40,24 @@ ini_set('display_error', 'On');
 $path_string = trim(str_replace(array('..', '\\'), '', urldecode($_REQUEST['__path'])), '/');
 $path = explode('/', $path_string);
 
-//dv($_REQUEST);
+$temp = array_diff_key($_REQUEST, array('__path' => ''));
+
+if (!is_array($temp))
+{
+    die;
+}
+
+if (!$hash = key($temp))
+{
+    die;
+}
+
+$checkHash = cp_thumb_url_hash($_REQUEST['__path']);
+
+if ($checkHash != $hash)
+{
+    die;
+}
 
 $excepted_params = array('w', 'h', 't', 'm', 's', 'e');
 $params = array();
