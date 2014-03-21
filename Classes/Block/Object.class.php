@@ -443,46 +443,6 @@ class Object extends \Cpeople\Classes\Base\Object
                 }
             }
         }
-/*
-        $arPropsConf = cp_get_ib_properties($this->IBLOCK_ID);
-
-        foreach ($this->data as $key=>$val)
-        {
-            if (cp_is_standard_field($key))
-            {
-                $arFields[$key] = $val;
-            }
-            else
-            {
-                if (isset($arPropsConf[$key]))
-                {
-                    if (is_array($val) && isset($val["VALUE"]))
-                    {
-                       $val = $val["VALUE"];
-                    }
-
-                    $propConf = $arPropsConf[$key];
-
-                    switch($propConf['PROPERTY_TYPE'])
-                    {
-                        case "S":
-
-                            $arProps[$key] = ($propConf['USER_TYPE'] == 'HTML')
-                                ? array("VALUE" => array("TEXT" => $val, "TYPE" => (strip_tags($val) == $val ? 'TEXT' : 'HTML')))
-                                : $val;
-
-                        break;
-
-                        default:
-
-                            $arProps[$key] = $val;
-
-                        break;
-                    }
-                }
-            }
-        }
-*/
 
         if ($this->id)
         {
@@ -499,5 +459,11 @@ class Object extends \Cpeople\Classes\Base\Object
         }
 
         return $this;
+    }
+
+    function appendImage($path, $key)
+    {
+        $this->data[$key] = \CFile::MakeFileArray($path);
+        $this->save();
     }
 }
