@@ -102,6 +102,11 @@ class Collection implements \Countable, \ArrayAccess, \SeekableIterator
         return $this->getFirstBy('id', $id);
     }
 
+    public function getByCode($code)
+    {
+        return $this->getFirstBy('code', $code);
+    }
+
     public function getCollectionBy($key, $value)
     {
         return new self($this->getBy($key, $value));
@@ -231,6 +236,38 @@ class Collection implements \Countable, \ArrayAccess, \SeekableIterator
     public function count()
     {
         return $this->length;
+    }
+
+    public function getNext($element, $cycle = true)
+    {
+        $key = array_search($element, $this->list);
+
+        if ($key === false) return false;
+
+        $key++;
+
+        if ($key >= $this->length)
+        {
+            $key = 0;
+        }
+
+        return $this->list[$key];
+    }
+
+    public function getPrev($element, $cycle = true)
+    {
+        $key = array_search($element, $this->list);
+
+        if ($key === false) return false;
+
+        $key--;
+
+        if ($key < 0)
+        {
+            $key = $this->length - 1;
+        }
+
+        return $this->list[$key];
     }
 }
 
