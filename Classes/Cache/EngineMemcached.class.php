@@ -17,6 +17,7 @@ class EngineMemcached implements Engine
      */
     static $cache;
     private $ttl = 30;
+    private $cacheIdPrefix = 'cp_';
 
     public function __construct($options = null)
     {
@@ -57,12 +58,12 @@ class EngineMemcached implements Engine
 
     public function save($cacheId, $data)
     {
-        self::$cache->set($cacheId, $data, false, $this->ttl);
+        self::$cache->set($this->getCacheId($cacheId), $data, false, $this->ttl);
     }
 
     public function get($cacheId)
     {
-        return self::$cache->get($cacheId);
+        return self::$cache->get($this->getCacheId($cacheId));
     }
 
     public function clear()
@@ -72,5 +73,10 @@ class EngineMemcached implements Engine
 
     public function clearByTag($tag)
     {
+    }
+
+    private function getCacheId($cacheId)
+    {
+        return $this->cacheIdPrefix . $cacheId;
     }
 }
