@@ -406,7 +406,6 @@ function russian_date()
         "April" => "апреля",
         "Apr" => "апр",
         "May" => "мая",
-        "May" => "мая",
         "June" => "июня",
         "Jun" => "июн",
         "July" => "июля",
