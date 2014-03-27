@@ -21,6 +21,8 @@ class Engine
 
         $modulesSQL = $this->makeModulesSQL($this->modulesList);
 
+        $query = str_replace(' ', '%', $query);
+
         $sql = "
             SELECT *
             FROM b_search_content bsc

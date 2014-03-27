@@ -20,21 +20,26 @@ class Result
 
     public function getTitle()
     {
-
+        return $this->data['TITLE'];
     }
 
-    public function getText()
+    public function getText($limit = 500)
     {
-
+        return substr($this->data['BODY'], 0, $limit);
     }
 
     public function getUrl()
     {
-
+        return $this->data['URL'];
     }
 
     public function getPath()
     {
 
+    }
+
+    public function getItemID()
+    {
+        return $this->data['ITEM_ID'];
     }
 } 
