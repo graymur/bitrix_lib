@@ -25,7 +25,7 @@ class Result
 
     public function getText($limit = 500)
     {
-        return substr($this->data['BODY'], 0, $limit);
+        return trim(mb_substr($this->data['BODY'], 0, $limit));
     }
 
     public function getUrl()

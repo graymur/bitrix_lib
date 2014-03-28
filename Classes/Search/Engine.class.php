@@ -70,6 +70,33 @@ class Engine
         }
     }
 
+    public function getFoundRows($query)
+    {
+        $retval = 0;
+
+        $modulesSQL = $this->makeModulesSQL($this->modulesList);
+        $query = str_replace(' ', '%', $query);
+
+        $sql = "
+            SELECT COUNT(*)
+            FROM b_search_content bsc
+            LEFT JOIN b_iblock_site bis
+                ON bis.IBLOCK_ID = bsc.PARAM2 AND bis.SITE_ID = '" . SITE_ID . "'
+            WHERE
+                (bsc.BODY LIKE '%$query%' OR bsc.TITLE LIKE '%$query%')
+                $modulesSQL
+        ";
+
+        $res = $this->makeQuery($sql);
+
+        if ($row = $res->Fetch())
+        {
+            $retval = $row['COUNT(*)'];
+        }
+
+        return $retval;
+    }
+
     protected function makeQuery($sql)
     {
         global $DB;
