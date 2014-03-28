@@ -14,6 +14,8 @@ class Engine
     protected $defaultClassName = '\Cpeople\Classes\Search\Result';
     protected $className = '\Cpeople\Classes\Search\Result';
     protected $modulesList = array();
+    protected $minLenth = 0;
+    protected $minWordLength = 0;
 
     public function makeSearch($query, $offset = 0, $limit = 10)
     {
@@ -21,7 +23,7 @@ class Engine
 
         $modulesSQL = $this->makeModulesSQL($this->modulesList);
 
-        $query = str_replace(' ', '%', $query);
+        $sqlReadyQuery = $this->prepareQuery($query);
 
         $sql = "
             SELECT *
@@ -29,7 +31,7 @@ class Engine
             LEFT JOIN b_iblock_site bis
                 ON bis.IBLOCK_ID = bsc.PARAM2 AND bis.SITE_ID = '" . SITE_ID . "'
             WHERE
-                (bsc.BODY LIKE '%$query%' OR bsc.TITLE LIKE '%$query%')
+                (bsc.BODY LIKE '%$sqlReadyQuery%' OR bsc.TITLE LIKE '%$sqlReadyQuery%')
                 $modulesSQL
             LIMIT " . (int) $offset . ", " . (int) $limit . "
         ";
@@ -42,6 +44,21 @@ class Engine
         }
 
         return $retval;
+    }
+
+    public function prepareQuery($query)
+    {
+        $query = trim($query);
+        $query = str_replace(preg_split('##', '!@#$%^&*()-+=#{}[]~`,./?<>', 0, PREG_SPLIT_NO_EMPTY), '', $query);
+
+        if (!empty($this->minWordLength))
+        {
+            $query = preg_replace('/\b[^\s]{1,' . ($this->minWordLength - 1) . '}\b/u', '', $query);
+        }
+
+        $query = preg_replace('#\s+#', '%', $query);
+
+        return $query;
     }
 
     public function setClassName($className)
@@ -105,6 +122,8 @@ class Engine
 
     protected function makeModulesSQL($modulesList)
     {
+        $modulesSQL = '';
+
         /** если есть модули */
         if ($modulesList)
         {
