@@ -33,6 +33,18 @@ class Object extends \Cpeople\Classes\Base\Object
         return $this->properties;
     }
 
+    public function getProperty($key)
+    {
+        $this->getProperties();
+
+        if (!array_key_exists($key, $this->properties))
+        {
+            throw new \Exception("Infoblock $this->id does not have property $key");
+        }
+
+        return $this->properties[$key];
+    }
+
     public function getFields()
     {
         if (!isset($this->fields))

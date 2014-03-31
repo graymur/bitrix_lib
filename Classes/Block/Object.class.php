@@ -8,6 +8,11 @@ class Object extends \Cpeople\Classes\Base\Object
     protected $imagesSrc = array();
     protected $related;
 
+    /**
+     * @var \Cpeople\Classes\Infoblock\Object
+     */
+    protected $infoblock;
+
     public function getSectionId()
     {
         return $this->data['IBLOCK_SECTION_ID'];
@@ -465,5 +470,28 @@ class Object extends \Cpeople\Classes\Base\Object
     {
         $this->data[$key] = \CFile::MakeFileArray($path);
         $this->save();
+    }
+
+    /**
+     * @return \Cpeople\Classes\Infoblock\Object|Object
+     */
+    function getInfoblock()
+    {
+        if (!isset($this->infoblock))
+        {
+            $this->infoblock = \Cpeople\Classes\Infoblock\Getter::instance()->getById($this->iblock_id);
+        }
+
+        return $this->infoblock;
+    }
+
+    function getPropertyOptions($key)
+    {
+        return $this->getInfoblock()->getProperty($key)->getOptions();
+    }
+
+    function getPropertyXMLId($key)
+    {
+
     }
 }

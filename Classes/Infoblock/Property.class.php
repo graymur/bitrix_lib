@@ -2,18 +2,28 @@
 
 namespace Cpeople\Classes\Infoblock;
 
-class Property {
-
+class Property extends \Cpeople\Classes\Base\Object
+{
     protected $data;
+    protected $options;
 
-    public function __construct($data = array())
+    public function getOptions()
     {
-        if (!is_array($data))
+        if (!isset($this->options))
         {
-            throw new \Exception('Argument should be an array to ' . __METHOD__);
+            $res = \CIBlockProperty::GetPropertyEnum(
+                $this->data['ID'],
+                Array("SORT"=>"asc"),
+                Array()
+            );
+
+            while ($row = $res->Fetch())
+            {
+                $this->options[] = $row;
+            }
         }
 
-        $this->data = $data;
+        return $this->options;
     }
 
     public function __get($name)
