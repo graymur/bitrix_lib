@@ -49,7 +49,8 @@ class Engine
     public function prepareQuery($query)
     {
         $query = trim($query);
-        $query = str_replace(preg_split('##', '!@#$%^&*()-+=#{}[]~`,./?<>', 0, PREG_SPLIT_NO_EMPTY), '', $query);
+        $query = str_replace(preg_split('##', '!@#$%^&*()-+=#{}[]~`,./?<>', 0, PREG_SPLIT_NO_EMPTY), '%', $query);
+        $query = preg_replace('#%+#', '%', $query);
 
         if (!empty($this->minWordLength))
         {
