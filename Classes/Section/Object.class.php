@@ -134,4 +134,10 @@ class Object extends \Cpeople\Classes\Base\Object
     {
         return \GetIBlockSectionPath($this->iblock_id, $this->id);
     }
+    
+    public function getLangPropValue($key)
+    {
+        $dataKey = strtoupper($key . '_' . LANGUAGE_ID);
+        return isset($this->data[$dataKey]) ? $this->data[$dataKey] : null;
+    }
 }
