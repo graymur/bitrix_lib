@@ -14,26 +14,44 @@ class Engine
     protected $defaultClassName = '\Cpeople\Classes\Search\Result';
     protected $className = '\Cpeople\Classes\Search\Result';
     protected $modulesList = array();
+    protected $tryInvertedLayout = false;
+    protected $query = '';
     protected $minLenth = 0;
     protected $minWordLength = 0;
+    protected $arNavStartParams = array('nPageSize' => 10, 'iNumPage' => 1);
 
-    public function makeSearch($query, $offset = 0, $limit = 10)
+    /**
+     * @return Engine
+     */
+    static function instance()
     {
+        return new self;
+    }
+
+    /**
+     * @param null $query
+     * @param null $offset
+     * @param null $limit
+     * @return \Cpeople\Classes\Search\Result[];
+     */
+    public function makeSearch($query = null, $offset = null, $limit = null)
+    {
+        if($query !== null) $this->query = $query;
+
         $retval = array();
 
-        $modulesSQL = $this->makeModulesSQL($this->modulesList);
+        $whereSQL = $this->makeSQLWhere($query);
 
-        $sqlReadyQuery = $this->prepareQuery($query);
+        $limit = intval($limit === null ? $this->arNavStartParams['nPageSize'] : $limit);
+        $offset = intval($offset === null ? ($this->arNavStartParams['iNumPage'] - 1) * $limit : $offset);
 
         $sql = "
             SELECT *
             FROM b_search_content bsc
             LEFT JOIN b_iblock_site bis
                 ON bis.IBLOCK_ID = bsc.PARAM2 AND bis.SITE_ID = '" . SITE_ID . "'
-            WHERE
-                (bsc.BODY LIKE '%$sqlReadyQuery%' OR bsc.TITLE LIKE '%$sqlReadyQuery%')
-                $modulesSQL
-            LIMIT " . (int) $offset . ", " . (int) $limit . "
+            $whereSQL
+            LIMIT " . $offset . ", ". $limit . "
         ";
 
         $res = $this->makeQuery($sql);
@@ -42,6 +60,27 @@ class Engine
         {
             $retval[] = new $this->className($row);
         }
+
+        return $retval;
+    }
+
+    public function makeSQLWhere($query = null)
+    {
+        if($query === null) $query = $this->query;
+
+        $sqlReadyQuery = $this->prepareQuery($query);
+        $invertedQuery = $this->makeInvertedLayout($sqlReadyQuery);
+
+        $modulesSQL = $this->makeModulesSQL($this->modulesList);
+
+        $retval =
+            "WHERE
+                (
+                    bsc.BODY LIKE '%$sqlReadyQuery%' OR bsc.TITLE LIKE '%$sqlReadyQuery%'
+                    " . ($invertedQuery ? "OR bsc.BODY LIKE '%$invertedQuery%' OR bsc.TITLE LIKE '%$invertedQuery%'" : "") . "
+                )
+                $modulesSQL
+            ";
 
         return $retval;
     }
@@ -72,6 +111,8 @@ class Engine
         }
 
         $this->className = $className;
+
+        return $this;
     }
 
     public function addModule($module, $iblockType = null, $iblockId = null)
@@ -82,27 +123,27 @@ class Engine
             {
                 $this->modulesList[$module][$iblockType][$id] = true;
             }
-        } else
+        }
+        else
         {
             $this->modulesList[$module][$iblockType][$iblockId] = true;
         }
+
+        return $this;
     }
 
-    public function getFoundRows($query)
+    public function getFoundRows($query = null)
     {
         $retval = 0;
 
-        $modulesSQL = $this->makeModulesSQL($this->modulesList);
-        $query = str_replace(' ', '%', $query);
+        $whereSQL = $this->makeSQLWhere($query);
 
         $sql = "
             SELECT COUNT(*)
             FROM b_search_content bsc
             LEFT JOIN b_iblock_site bis
                 ON bis.IBLOCK_ID = bsc.PARAM2 AND bis.SITE_ID = '" . SITE_ID . "'
-            WHERE
-                (bsc.BODY LIKE '%$query%' OR bsc.TITLE LIKE '%$query%')
-                $modulesSQL
+            $whereSQL
         ";
 
         $res = $this->makeQuery($sql);
@@ -111,6 +152,8 @@ class Engine
         {
             $retval = $row['COUNT(*)'];
         }
+
+        $this->total = $retval;
 
         return $retval;
     }
@@ -146,35 +189,43 @@ class Engine
                 $modulesSQL .= " AND (";
             }
 
-            foreach ($iblockTypes as $iblockType => $iblockIds)
+            /** для модуля main фильтруем по URL */
+            if($module === 'main')
             {
-                if ($iblockIds != reset($iblockTypes))
+                $modulesSQL .= "bsc.URL LIKE '" . implode("' OR bsc.URL LIKE '", array_keys($iblockTypes)) . "'";
+            }
+            else
+            {
+                foreach ($iblockTypes as $iblockType => $iblockIds)
                 {
-                    $modulesSQL .= " OR ";
-                }
-                if ($iblockType)
-                {
-                    /** запись типа инфоблока */
-                    $modulesSQL .= "(bsc.PARAM1 = '$iblockType'";
+                    if ($iblockIds != reset($iblockTypes))
+                    {
+                        $modulesSQL .= " OR ";
+                    }
+                    if ($iblockType)
+                    {
+                        /** запись типа инфоблока */
+                        $modulesSQL .= "(bsc.PARAM1 = '$iblockType'";
 
-                    if ($iblocks = implode(",", array_keys($iblockIds)))
+                        if ($iblocks = implode(",", array_keys($iblockIds)))
+                        {
+                            /** запись инфоблоков */
+                            $modulesSQL .= " AND bsc.PARAM2 IN ($iblocks)";
+                        }
+
+                        /** закрываем каждый тип инфоблока */
+                        $modulesSQL .= ")";
+                    } elseif ($iblocks = implode(",", array_keys($iblockIds)))
                     {
                         /** запись инфоблоков */
-                        $modulesSQL .= " AND bsc.PARAM2 IN ($iblocks)";
-                    }
-
-                    /** закрываем каждый тип инфоблока */
-                    $modulesSQL .= ")";
-                } elseif ($iblocks = implode(",", array_keys($iblockIds)))
-                {
-                    /** запись инфоблоков */
-                    if (array_filter(array_keys($iblockTypes)))
-                    {
-                        $modulesSQL .= "bsc.PARAM2 IN ($iblocks)";
-                    /** если у нас только инфоблоки без типов */
-                    } else
-                    {
-                        $modulesSQL .= " AND bsc.PARAM2 IN ($iblocks)";
+                        if (array_filter(array_keys($iblockTypes)))
+                        {
+                            $modulesSQL .= "bsc.PARAM2 IN ($iblocks)";
+                        /** если у нас только инфоблоки без типов */
+                        } else
+                        {
+                            $modulesSQL .= " AND bsc.PARAM2 IN ($iblocks)";
+                        }
                     }
                 }
             }
@@ -196,5 +247,78 @@ class Engine
         }
 
         return $modulesSQL;
+    }
+
+    public function setInvertedLayout($bVal)
+    {
+        $this->tryInvertedLayout = $bVal;
+
+        return $this;
+    }
+
+    protected function makeInvertedLayout($query)
+    {
+        if(!$this->tryInvertedLayout) return '';
+
+        $invertedQuery = '';
+        $fromString = 'qwertyuiop[]asdfghjkl;\'\zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?йцукенгшщзхъфывапролджэ\\ячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,';
+        $toString   = 'йцукенгшщзхъфывапролджэ\\ячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,qwertyuiop[]asdfghjkl;\'\zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?';
+
+        for($i = 0, $c = strlen($query); $i < $c; $i++)
+        {
+            $curChar = substr($query, $i, 1);
+            $pos = strpos($fromString, $curChar);
+            $newChar = $pos !== false ? substr($toString, $pos, 1) : $curChar;
+
+            $invertedQuery .= $newChar;
+        }
+
+        return $invertedQuery;
+    }
+
+    public function setPageSize($size)
+    {
+        $this->arNavStartParams['nPageSize'] = (int) $size;
+
+        return $this;
+    }
+
+    public function setPageNum($pageNum)
+    {
+        $this->arNavStartParams['iNumPage'] = (int) $pageNum;
+
+        return $this;
+    }
+
+    public function paginate($pagingSize, $pageNum)
+    {
+        $this->setPageSize($pagingSize);
+        $this->setPageNum(intval($pageNum) < 1 ? 1 : intval($pageNum));
+
+        return $this;
+    }
+
+    /**
+     * @param $urlTemplate
+     * @return \Cpeople\paging
+     */
+    public function getPagingObject($urlTemplate)
+    {
+        if (!isset($this->total))
+        {
+            $this->total = $this->getFoundRows($this->query);
+        }
+
+        $paging = new \Cpeople\paging($this->arNavStartParams['iNumPage'], $this->total, $this->arNavStartParams['nPageSize']);
+        $paging->setFormat($urlTemplate);
+
+        return $paging;
+    }
+
+    public function setQuery($query)
+    {
+        $this->query = $query;
+
+        return $this;
     }
 } 
