@@ -175,7 +175,7 @@ abstract class Getter
 
 
     /**
-     * @return Object
+     * @return \Cpeople\Classes\Base\Object|\Cpeople\Classes\Block\Object|\Cpeople\Classes\Section\Object|\Cpeople\Classes\Catalog\Object
      */
     public function getOne()
     {
@@ -184,7 +184,7 @@ abstract class Getter
     }
 
     /**
-     * @return Object
+     * @return \Cpeople\Classes\Base\Object|\Cpeople\Classes\Block\Object|\Cpeople\Classes\Section\Object|\Cpeople\Classes\Catalog\Object
      */
     public function getById($id)
     {
@@ -197,7 +197,7 @@ abstract class Getter
     }
 
     /**
-     * @return Object
+     * @return \Cpeople\Classes\Base\Object|\Cpeople\Classes\Block\Object|\Cpeople\Classes\Section\Object|\Cpeople\Classes\Catalog\Object
      */
     public function getByCode($code, $iblockId = null)
     {

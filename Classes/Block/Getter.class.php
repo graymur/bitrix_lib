@@ -122,6 +122,9 @@ class Getter extends \Cpeople\Classes\Base\Getter
         );
     }
 
+    /**
+     * @return \Cpeople\Classes\Block\Object[]
+     */
     public function get()
     {
         if (\Cpeople\Classes\Registry::bitrixCacheEnabled() && ($retval = $this->getCachedResult()))
@@ -197,7 +200,7 @@ class Getter extends \Cpeople\Classes\Base\Getter
     }
 
     /**
-     * @return Object
+     * @return \Cpeople\Classes\Block\Object
      */
     public function getByCode($code, $iblockId = null)
     {

@@ -74,6 +74,9 @@ class Getter extends \Cpeople\Classes\Base\Getter
         return $this;
     }
 
+    /**
+     * @return \Cpeople\Classes\Section\Object[]
+     */
     public function get()
     {
         $retval = array();
