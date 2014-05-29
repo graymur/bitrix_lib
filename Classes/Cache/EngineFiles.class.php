@@ -62,10 +62,16 @@ class EngineFiles implements Engine
     {
         $file = $this->getFileName($cacheId);
 
-        if (gettype($data) != 'srting')
+        if (gettype($data) != 'string')
         {
             $data = serialize($data);
         }
+
+//        if ($cacheId == 'c13d5b1aedce44b5e0e6712874f9545c')
+//        {
+//            dv($file);
+//            dv($data);
+//        }
 
         file_put_contents($file, $data);
 //        $this->check(file_exists($file), 'Could not save cache file');
@@ -76,7 +82,14 @@ class EngineFiles implements Engine
     {
         $retval = file_get_contents($this->getFileName($cacheId));
 
-        if (strpos($retval, 'a:') === 0)
+        if ($cacheId == 'c13d5b1aedce44b5e0e6712874f9545c')
+        {
+//            dv($file);
+//            dvv(substr($retval, 0, 2) == 'a:');
+//            dv($retval);
+        }
+
+        if (substr($retval, 0, 2) == 'a:')
         {
             $retval = unserialize($retval);
         }
