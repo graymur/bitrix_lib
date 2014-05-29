@@ -54,7 +54,7 @@ abstract class Getter
     }
 
     /**
-     * @return Getter
+     * @return Getter|\Cpeople\Classes\Block\Getter|\Cpeople\Classes\Section\Getter
      */
     public function setHydrateById($mode)
     {
@@ -63,7 +63,7 @@ abstract class Getter
     }
 
     /**
-     * @return Getter
+     * @return Getter|\Cpeople\Classes\Block\Getter|\Cpeople\Classes\Section\Getter
      */
     public function setFetchMode($mode)
     {
@@ -72,7 +72,7 @@ abstract class Getter
     }
 
     /**
-     * @return Getter
+     * @return Getter|\Cpeople\Classes\Block\Getter|\Cpeople\Classes\Section\Getter
      */
     public function setOrder($arOrder)
     {
@@ -81,7 +81,7 @@ abstract class Getter
     }
 
     /**
-     * @return Getter
+     * @return Getter|\Cpeople\Classes\Block\Getter|\Cpeople\Classes\Section\Getter
      */
     public function setFilter($arFilter)
     {
@@ -90,7 +90,7 @@ abstract class Getter
     }
 
     /**
-     * @return Getter
+     * @return Getter|\Cpeople\Classes\Block\Getter|\Cpeople\Classes\Section\Getter
      */
     public function addFilter()
     {
@@ -121,7 +121,7 @@ abstract class Getter
     }
 
     /**
-     * @return Getter
+     * @return Getter|\Cpeople\Classes\Block\Getter|\Cpeople\Classes\Section\Getter
      */
     public function addCallback($callback)
     {
@@ -135,7 +135,7 @@ abstract class Getter
     }
 
     /**
-     * @return Getter
+     * @return Getter|\Cpeople\Classes\Block\Getter|\Cpeople\Classes\Section\Getter
      */
     public function setResultSetCallback($callback)
     {
@@ -149,7 +149,7 @@ abstract class Getter
     }
 
     /**
-     * @return Getter
+     * @return Getter|\Cpeople\Classes\Block\Getter|\Cpeople\Classes\Section\Getter
      */
     public function setHydrationMode($mode)
     {
@@ -158,7 +158,7 @@ abstract class Getter
     }
 
     /**
-     * @return Getter
+     * @return Getter|\Cpeople\Classes\Block\Getter|\Cpeople\Classes\Section\Getter
      */
     public function setClassName($className)
     {
