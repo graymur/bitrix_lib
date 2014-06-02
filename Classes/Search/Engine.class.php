@@ -15,6 +15,7 @@ class Engine
     protected $className = '\Cpeople\Classes\Search\Result';
     protected $modulesList = array();
     protected $tryInvertedLayout = false;
+    protected $tryYandexSpeller = false;
     protected $query = '';
     protected $minLenth = 0;
     protected $minWordLength = 0;
@@ -36,8 +37,12 @@ class Engine
      */
     public function makeSearch($query = null, $offset = null, $limit = null)
     {
+        if($this->tryYandexSpeller)
+        {
+            $this->origQuery = $query;
+            $query = $this->makeYandexSpeller($query);
+        }
         if($query !== null) $this->query = $query;
-
         $retval = array();
 
         $whereSQL = $this->makeSQLWhere($query);
@@ -59,6 +64,12 @@ class Engine
         while ($row = $res->Fetch())
         {
             $retval[] = new $this->className($row);
+        }
+
+        if(empty($retval) && $this->tryYandexSpeller && $this->origQuery != $query)
+        {
+            $this->setYandexSpeller(false);
+            $retval = $this->makeSearch($this->origQuery, $offset, $limit);
         }
 
         return $retval;
@@ -276,6 +287,18 @@ class Engine
         }*/
 
         return $invertedQuery;
+    }
+
+    public function setYandexSpeller($bVal)
+    {
+        $this->tryYandexSpeller = $bVal;
+
+        return $this;
+    }
+
+    protected function makeYandexSpeller($query)
+    {
+        return \Cpeople\Classes\Services\YandexSpeller::correctText($query);
     }
 
     public function setPageSize($size)
