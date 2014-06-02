@@ -227,7 +227,12 @@ class Engine
             /** для модуля main фильтруем по URL */
             if($module === 'main')
             {
-                $modulesSQL .= "bsc.URL LIKE '" . implode("' OR bsc.URL LIKE '", array_keys($iblockTypes)) . "'";
+                $urlList = array_keys($iblockTypes);
+                $urlList = array_filter($urlList);
+                if(!empty($urlList))
+                {
+                    $modulesSQL .= "bsc.URL LIKE '" . implode("' OR bsc.URL LIKE '", $urlList) . "'";
+                }
             }
             else
             {
