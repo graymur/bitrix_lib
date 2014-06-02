@@ -37,11 +37,43 @@ class Engine
      */
     public function makeSearch($query = null, $offset = null, $limit = null)
     {
-        if($this->tryYandexSpeller)
+        $retval = $this->search($query, $offset, $limit);
+
+        if(empty($retval) && $this->tryInvertedLayout)
         {
-            $this->origQuery = $query;
-            $query = $this->makeYandexSpeller($query);
+            $invertedQuery = $this->makeInvertedLayout($query);
+            $retval = $this->search($invertedQuery, $offset, $limit);
         }
+
+        if(empty($retval) && $this->tryYandexSpeller)
+        {
+            $withoutMistakeQuery = $this->makeYandexSpeller($query);
+            if($query !== $withoutMistakeQuery)
+            {
+                $retval = $this->search($withoutMistakeQuery, $offset, $limit);
+            }
+        }
+
+        if(empty($retval) && $this->tryInvertedLayout && $this->tryYandexSpeller)
+        {
+            $withoutMistakeInvertedQuery = $this->makeYandexSpeller($invertedQuery);
+            if($query !== $withoutMistakeInvertedQuery)
+            {
+                $retval = $this->search($withoutMistakeInvertedQuery, $offset, $limit);
+            }
+        }
+
+        return $retval;
+    }
+
+    /**
+     * @param null $query
+     * @param null $offset
+     * @param null $limit
+     * @return \Cpeople\Classes\Search\Result[];
+     */
+    public function search($query = null, $offset = null, $limit = null)
+    {
         if($query !== null) $this->query = $query;
         $retval = array();
 
@@ -66,12 +98,6 @@ class Engine
             $retval[] = new $this->className($row);
         }
 
-        if(empty($retval) && $this->tryYandexSpeller && $this->origQuery != $query)
-        {
-            $this->setYandexSpeller(false);
-            $retval = $this->makeSearch($this->origQuery, $offset, $limit);
-        }
-
         return $retval;
     }
 
@@ -80,7 +106,6 @@ class Engine
         if($query === null) $query = $this->query;
 
         $sqlReadyQuery = $this->prepareQuery($query);
-        $invertedQuery = $this->makeInvertedLayout($sqlReadyQuery);
 
         $modulesSQL = $this->makeModulesSQL($this->modulesList);
 
@@ -88,7 +113,6 @@ class Engine
             "WHERE
                 (
                     bsc.BODY LIKE '%$sqlReadyQuery%' OR bsc.TITLE LIKE '%$sqlReadyQuery%'
-                    " . ($invertedQuery ? "OR bsc.BODY LIKE '%$invertedQuery%' OR bsc.TITLE LIKE '%$invertedQuery%'" : "") . "
                 )
                 $modulesSQL
             ";
