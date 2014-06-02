@@ -350,7 +350,7 @@ function array_split($array, $chunks = 2, $preserveKeys = false)
 
 function num_to_string($value, $_1, $_2, $_3, $return_value = true)
 {
-    if ($value > 10 && $value < 20)
+    if (($value > 10 && $value < 20) || ($value > 110 && $value < 120))
     {
         $v = $_3;
     }
