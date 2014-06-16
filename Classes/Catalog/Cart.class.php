@@ -64,7 +64,7 @@ class Cart
 
         foreach ((array) $this->getItems() as $item)
         {
-            $retval += $item->getPrice();
+            $retval += $item->getSum();
         }
 
         return $retval;
@@ -73,5 +73,19 @@ class Cart
     public function setTainted($tainted)
     {
         $this->tainted = (bool) $tainted;
+    }
+
+    public function removeById($id)
+    {
+        $items = $this->getItems();
+
+        foreach ($items as $item)
+        {
+            if ($item->id == $id)
+            {
+                $item->remove();
+                break;
+            }
+        }
     }
 }

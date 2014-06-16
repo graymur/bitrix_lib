@@ -8,6 +8,8 @@
 
 namespace Cpeople\Classes\Catalog;
 
+use Bitrix\Main\DB\Exception;
+
 class CartItem implements \ArrayAccess
 {
     protected $container;
@@ -23,7 +25,7 @@ class CartItem implements \ArrayAccess
      */
     protected $product;
 
-    public function __construct($data = array(), \Cpeople\Classes\Catalog\Cart $cart = null)
+    public function __construct($data = array(), \Cpeople\Classes\Catalog\Cart $cart)
     {
         $this->container = $data;
         $this->cart = $cart;
@@ -53,6 +55,18 @@ class CartItem implements \ArrayAccess
     public function offsetGet($offset)
     {
         return isset($this->container[$offset]) ? $this->container[$offset] : null;
+    }
+
+    public function __get($key)
+    {
+        $key = strtoupper($key);
+
+        if (!isset($this->container[$key]))
+        {
+            throw new Exception('Object ' . get_class($this) . ' does not have property ' . $key);
+        }
+
+        return $this->container[$key];
     }
 
     public function getProduct($className = null)
