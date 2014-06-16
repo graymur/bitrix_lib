@@ -530,3 +530,8 @@ function cp_thumb_url_hash($string)
 
     return $hash;
 }
+
+function with($object)
+{
+    return $object;
+}
