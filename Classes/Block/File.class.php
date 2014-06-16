@@ -84,4 +84,9 @@ class File
     {
         return $this->data['FILE_NAME'];
     }
+
+    public function getId()
+    {
+        return $this->data['ID'];
+    }
 }
