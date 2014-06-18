@@ -121,6 +121,8 @@ class Cart
             )
         );
 
+//        dv($this->getItemsRaw());
+
         $delivery = array();
 
         $res = \CSaleDeliveryHandler::GetList(array('SORT' => 'ASC'), $filter);
