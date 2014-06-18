@@ -129,9 +129,25 @@ class Cart
         {
             if (!is_array($deliveryItem) || !is_array($deliveryItem['PROFILES'])) continue;
 
+            foreach ($deliveryItem['PROFILES'] as $key => $profile)
+            {
+                $deliveryProfile = array(
+                    'ID' => $deliveryItem['SID'] . ':' . $key,
+                    'SID' => $deliveryItem['SID'],
+                    'PROFILE' => $key,
+                    'NAME' => $deliveryItem['NAME'],
+                    'TITLE' => $profile['TITLE'],
+                    'DESCRIPTION' => $deliveryItem['DESCRIPTION'],
+                    'DESCRIPTION_INNER' => $deliveryItem['DESCRIPTION_INNER'],
+                    'BASE_CURRENCY' => $deliveryItem['BASE_CURRENCY'],
+                    'HANDLER' => $deliveryItem['HANDLER'],
+                    'DELIVERY' => $deliveryItem
+                );
 
+//                dvv($deliveryProfile['TITLE']);
 
-            $delivery[] = $deliveryItem;
+                $delivery[] = $deliveryProfile;
+            }
         }
 
         $res = \CSaleDelivery::GetList(
