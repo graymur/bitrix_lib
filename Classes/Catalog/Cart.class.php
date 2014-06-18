@@ -11,8 +11,10 @@ namespace Cpeople\Classes\Catalog;
 class Cart
 {
     protected $itemClass = '\Cpeople\Classes\Catalog\CartItem';
+    protected $itemsRaw;
     protected $items;
     protected $tainted = true;
+    protected $location;
 
     public function __construct()
     {
@@ -27,6 +29,17 @@ class Cart
     public function getCount()
     {
         return count($this->getItems());
+    }
+
+    public function getItemsRaw()
+    {
+        $this->getItems();
+        return $this->itemsRaw;
+    }
+
+    public function setLocation($location)
+    {
+        $this->location = $location;
     }
 
     public function getItems()
@@ -49,7 +62,9 @@ class Cart
 
             while ($item = $dbBasketItems->Fetch())
             {
-                $this->items[] = new $className($item, $this);
+                $this->itemsRaw[] = $item;
+                $item = new $className($item, $this);
+                $this->items[] = $item;
             }
 
             $this->tainted = false;
@@ -87,5 +102,56 @@ class Cart
                 break;
             }
         }
+    }
+
+    public function getWeight()
+    {
+        return 1000;
+    }
+
+    public function getDeliveryOptions($location)
+    {
+        $filter = array(
+            'COMPABILITY' => array(
+                'WEIGHT' => $this->getWeight(),
+                'PRICE' => $this->getTotal(),
+                'LOCATION_FROM' => \COption::GetOptionString('sale', 'location', false, SITE_ID),
+                'LOCATION_TO' => $location,
+                'ITEMS' => $this->getItemsRaw()
+            )
+        );
+
+        $delivery = array();
+
+        $res = \CSaleDeliveryHandler::GetList(array('SORT' => 'ASC'), $filter);
+
+        while ($deliveryItem = $res->Fetch())
+        {
+            if (!is_array($deliveryItem) || !is_array($deliveryItem['PROFILES'])) continue;
+
+
+
+            $delivery[] = $deliveryItem;
+        }
+
+        $res = \CSaleDelivery::GetList(
+            array('SORT'=>'ASC', 'NAME'=>'ASC'),
+            array(
+                'LID' => SITE_ID,
+                '+<=WEIGHT_FROM' => $this->getWeight(),
+                '+>=WEIGHT_TO' => $this->getWeight(),
+                'ACTIVE' => 'Y',
+                'LOCATION' => $location,
+            )
+        );
+
+        while ($deliveryItem = $res->Fetch())
+        {
+            $deliveryDescription = \CSaleDelivery::GetByID($deliveryItem['ID']);
+            $deliveryItem['DESCRIPTION'] = htmlspecialcharsbx($deliveryDescription['DESCRIPTION']);
+            $delivery[] = $deliveryItem;
+        }
+
+        return $delivery;
     }
 }
