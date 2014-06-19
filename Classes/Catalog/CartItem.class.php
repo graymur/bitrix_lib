@@ -98,6 +98,11 @@ class CartItem implements \ArrayAccess
         return $this['PRICE'];
     }
 
+    public function getWeight()
+    {
+        return $this['WEIGHT'];
+    }
+
     public function getBitrixDiscounts()
     {
         return \CCatalogDiscount::GetDiscountByProduct($this->getProduct()->id);
