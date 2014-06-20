@@ -347,3 +347,38 @@ function cp_is_standard_field($fieldName)
 
     return in_array($fieldName, $arStandardFields);
 }
+
+/**
+ * Фунцкция принимает список инфоблоков \Cpeople\Classes\Block\Object,
+ * делает выборку разделов и возвращает список разделов \Cpeople\Classes\Section\Object
+ * с полем elements, содержащим инфорблоки
+ *
+ * @param $iblocks
+ * @return bool
+ */
+function cp_group_by_section($iblocks)
+{
+    if (empty($iblocks) || !is_array($iblocks)) return false;
+
+    $sectionsIds = array();
+
+    $list = new \Cpeople\Classes\Block\Collection($iblocks);
+
+    foreach ($list as $item)
+    {
+        $sectionsIds[] = $item->iblock_section_id;
+    }
+
+    if (empty_array($sectionsIds)) return false;
+
+    $sections = \Cpeople\Classes\Section\Getter::instance()->setFilter(array(
+        'ID' => $sectionsIds
+    ))->checkPermissions(false)->get();
+
+    foreach ($sections as $section)
+    {
+        $section->elements = $list->getBy('iblock_section_id', $section->id);
+    }
+
+    return $sections;
+}
