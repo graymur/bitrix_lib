@@ -134,10 +134,37 @@ class Object extends \Cpeople\Classes\Base\Object
     {
         return \GetIBlockSectionPath($this->iblock_id, $this->id);
     }
+
+    public function getPath()
+    {
+        $retval = array();
+        $className = get_class($this);
+        $res = \GetIBlockSectionPath($this->iblock_id, $this->id);
+
+        while($row = $res->Fetch())
+        {
+            $retval[] = new $className($row);
+        }
+
+        return $retval;
+    }
     
     public function getLangPropValue($key)
     {
         $dataKey = strtoupper($key . '_' . LANGUAGE_ID);
         return isset($this->data[$dataKey]) ? $this->data[$dataKey] : null;
+    }
+
+    public function hasParentSection()
+    {
+        return $this->iblock_section_id;
+    }
+
+    /**
+     * @return \Cpeople\Classes\Section\Object
+     */
+    public function getParentSection()
+    {
+        return \Cpeople\Classes\Section\Getter::instance()->getById($this->iblock_section_id);
     }
 }

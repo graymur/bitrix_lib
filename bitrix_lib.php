@@ -354,9 +354,9 @@ function cp_is_standard_field($fieldName)
  * с полем elements, содержащим инфорблоки
  *
  * @param $iblocks
- * @return bool
+ * @return array
  */
-function cp_group_by_section($iblocks)
+function cp_group_by_section($iblocks, $level = 0)
 {
     if (empty($iblocks) || !is_array($iblocks)) return false;
 
