@@ -18,6 +18,7 @@ class Cart
     protected $deliveryId;
     protected $deliveryPrice;
     protected $paymentId;
+    protected $userId;
 
     public function __construct()
     {
@@ -41,6 +42,11 @@ class Cart
         if (!empty($_SESSION['CART_PAYMENT_ID']))
         {
             $this->paymentId = $_SESSION['CART_PAYMENT_ID'];
+        }
+
+        if (!empty($_SESSION['CART_USER_ID']))
+        {
+            $this->userId = $_SESSION['CART_USER_ID'];
         }
     }
 
@@ -95,6 +101,27 @@ class Cart
         return $retval;
     }
 
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+        $_SESSION['CART_USER_ID'] = $this->userId;
+    }
+
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    public function getUser()
+    {
+        if (!$this->getUserId())
+        {
+            throw new \Exception('Не привязан пользователь ' . __METHOD__);
+        }
+
+        return \CUser::GetByID($this->getUserId())->Fetch();
+    }
+
     public function setDeliveryId($id)
     {
         $this->deliveryId = (int) $id;
@@ -133,7 +160,7 @@ class Cart
         return $this->deliveryPrice;
     }
 
-    public function getItems()
+    public function getItems($orderId = null)
     {
         if (!isset($this->items) || $this->tainted)
         {
@@ -145,7 +172,7 @@ class Cart
 
             $dbBasketItems = \CSaleBasket::GetList(
                 array("NAME" => "ASC", "ID" => "ASC"),
-                array("FUSER_ID" => \CSaleBasket::GetBasketUserID(), /*"LID" => SITE_ID,*/ "ORDER_ID" => "NULL"),
+                array("FUSER_ID" => \CSaleBasket::GetBasketUserID(), /*"LID" => SITE_ID,*/ "ORDER_ID" => $orderId),
                 false,
                 false,
                 array()
@@ -426,5 +453,59 @@ class Cart
         }
 
         return $retval;
+    }
+
+    public function saveOrder()
+    {
+        $arErrors = $arWarnings = array();
+
+        $arOrderDat = \CSaleOrder::DoCalculateOrder(
+            SITE_ID,
+            $this->getUser()['ID'],
+            $this->getItemsRaw(),
+            1,
+            array(),
+            $this->getDeliveryId(),
+            $this->getPaymentId(),
+            array(),
+            $arErrors,
+            $arWarnings
+        );
+
+        $data = array(
+            'LID' => SITE_ID,
+            'PERSON_TYPE_ID' => 1,
+            'PAYED' => 'N',
+            'CANCELED' => 'N',
+            'STATUS_ID' => 'N',
+            'PRICE' => $this->getTotal(),
+            'CURRENCY' => 'RUB',
+            'USER_ID' => $this->getUser()['ID'],
+            'PAY_SYSTEM_ID' => $this->getPaymentId(),
+            'PRICE_DELIVERY' => $this->getDeliveryPrice(),
+            'DELIVERY_ID' => $this->getDeliveryId(),
+            'DISCOUNT_VALUE' => 0,
+            'TAX_VALUE' => 0.0,
+//            'USER_DESCRIPTION' => $this->getUser()['PERSONAL_STREET'],
+        );
+
+        $arOrderDat['ORDER_PROP'][3] = $this->getUser()['PERSONAL_MOBILE'];
+        $arOrderDat['ORDER_PROP'][7] = $this->getUser()['PERSONAL_STREET'];
+
+        $errors = array();
+
+        $orderId = \CSaleOrder::DoSaveOrder($arOrderDat, $data, 0, $errors);
+
+        return $orderId;
+    }
+
+    public function fromOrder(\Cpeople\Classes\Catalog\Order $order, $location)
+    {
+        $this->getItems($order['ID']);
+        $this->setUserId($order['USER_ID']);
+        $this->setPaymentId($order['PAY_SYSTEM_ID']);
+        $this->setDeliveryId($order['DELIVERY_ID']);
+        $this->setDeliveryPrice($order['PRICE_DELIVERY']);
+        $this->setLocationId($order->getLocationId());
     }
 }
