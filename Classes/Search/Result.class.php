@@ -56,9 +56,50 @@ class Result
         return FormatDate($format, strtotime($this->data['DATE_CHANGE']));
     }
 
-    public function getBodyHighlighted()
+    public function getBodyHighlighted($keywords = null, $wordsAround = 5, $tag = '<b>', $delimiter = ' &hellip; ')
     {
-        return $this->data['BODY'];
+        if (!is_array($keywords))
+        {
+            $keywords = preg_replace('/<.*>/Uu', '', $keywords);
+            $keywords = preg_replace('/\s+/u', ' ', $keywords);
+
+            $keywords = preg_split('/\s+/u', $keywords, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
+        $tag_close = preg_replace('/<([a-z0-9]+).*>/isx', '</$1>', $tag);
+
+        array_walk($keywords, 'preg_quote');
+
+        $words = preg_split('/\s+/u', strip_tags($this->data['BODY']), -1, PREG_SPLIT_NO_EMPTY);
+
+        if (!$matched = preg_grep("/(" . join('|', $keywords) . ")/iu", $words))
+        {
+            return false;
+        }
+
+        foreach ($matched as $i => $word)
+        {
+            $words[$i] = "{$tag}{$words[$i]}{$tag_close}";
+        }
+
+        $matches = array();
+
+        $prev = -$wordsAround * 2;
+
+        foreach ($matched as $i => $word)
+        {
+            if ($i - $wordsAround > $prev)
+            {
+                $start = $i - $wordsAround;
+                if ($start < 0) $start = 0;
+
+                $matches[] = join(' ', array_slice($words, $start, $wordsAround * 2 + 1));
+            }
+
+            $prev = $i;
+        }
+
+        return join($delimiter, $matches);
     }
 
     /**
