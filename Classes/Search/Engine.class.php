@@ -20,6 +20,7 @@ class Engine
     protected $minLenth = 0;
     protected $minWordLength = 0;
     protected $arNavStartParams = array('nPageSize' => 10, 'iNumPage' => 1);
+    protected $count = 0;
 
     /**
      * @return Engine
@@ -83,13 +84,17 @@ class Engine
         $offset = intval($offset === null ? ($this->arNavStartParams['iNumPage'] - 1) * $limit : $offset);
 
         $sql = "
-            SELECT *
+            SELECT SQL_CALC_FOUND_ROWS *
             FROM b_search_content bsc
             LEFT JOIN b_iblock_site bis
                 ON bis.IBLOCK_ID = bsc.PARAM2 AND bis.SITE_ID = '" . SITE_ID . "'
             $whereSQL
-            LIMIT " . $offset . ", ". $limit . "
         ";
+
+        if ($limit)
+        {
+            $sql .= 'LIMIT ' . ($offset ? "$offset, $limit" : $limit);
+        }
 
         $res = $this->makeQuery($sql);
 
@@ -98,7 +103,18 @@ class Engine
             $retval[] = new $this->className($row);
         }
 
+        if (!empty($retval))
+        {
+            $res = $this->makeQuery('SELECT FOUND_ROWS()')->Fetch();
+            $this->count = (int) reset($res);
+        }
+
         return $retval;
+    }
+
+    public function getCount()
+    {
+        return $this->count;
     }
 
     public function makeSQLWhere($query = null)
@@ -169,6 +185,8 @@ class Engine
 
     public function getFoundRows($query = null)
     {
+        return $this->getCount();
+        /*
         $retval = 0;
 
         $whereSQL = $this->makeSQLWhere($query);
@@ -190,7 +208,7 @@ class Engine
 
         $this->total = $retval;
 
-        return $retval;
+        return $retval;*/
     }
 
     protected function makeQuery($sql)

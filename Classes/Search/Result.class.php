@@ -31,6 +31,11 @@ class Result
 
     public function getUrl()
     {
+        if ($this->data['MODULE_ID'] === 'iblock')
+        {
+
+        }
+
         return $this->data['MODULE_ID'] === 'iblock'
             ? ($this->getElement() ? $this->getElement()->getUrl() : false)
             : $this->data['URL'];
@@ -51,6 +56,11 @@ class Result
         return FormatDate($format, strtotime($this->data['DATE_CHANGE']));
     }
 
+    public function getBodyHighlighted()
+    {
+        return $this->data['BODY'];
+    }
+
     /**
      * @return \Cpeople\Classes\Block\Object|\Cpeople\Classes\Section\Object
      */
@@ -59,7 +69,7 @@ class Result
         if($this->element === null)
         {
             $itemId = $this->getItemID();
-            $isSection = intval($itemId) != $itemId;
+            $isSection = !is_numeric($itemId);
 
             if($isSection)
             {
