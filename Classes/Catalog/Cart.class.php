@@ -203,6 +203,19 @@ class Cart
         return $retval;
     }
 
+    public function getDiscountSum()
+    {
+        $withDiscount = $withoutDiscount = 0;
+
+        foreach ((array) $this->getItems() as $item)
+        {
+            $withDiscount += $item->getSum();
+            $withoutDiscount += $item->getSumWODiscount();
+        }
+
+        return $withoutDiscount - $withDiscount;
+    }
+
     public function getTotalDelivery()
     {
         $deliveryPrice = 0;
