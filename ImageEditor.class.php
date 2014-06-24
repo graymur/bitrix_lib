@@ -115,36 +115,19 @@ class ImageEditorGD
             case IMAGE_EDITOR_RESIZE_PROPORTIONAL:
             default:
 
-                if ($this->currentWidth > $this->currentHeight && $this->currentWidth > $width)
+                if ($this->currentHeight > $height || $this->currentWidth > $width)
                 {
-                    $w = $width;
-                    $h = intval($width * $this->currentHeight / $this->currentWidth);
-                }
-                elseif ($this->currentHeight >= $this->currentWidth && $this->currentHeight > $height)
-                {
-                    $h = $height;
-                    $w = intval($height * $this->currentWidth / $this->currentHeight);
+                    $r = max($this->currentHeight / $height, $this->currentWidth / $width);
+                    $h = intval($this->currentHeight / $r);
+                    $w = intval($this->currentWidth / $r);
                 }
                 else
                 {
-                    $w = $this->currentWidth;
-                    $h = $this->currentHeight;
-                }
-
-                // foolproof
-                if ($h > $height)
-                {
                     $h = $height;
-                    $w = intval($height * $this->currentWidth / $this->currentHeight);
-                }
-
-                if ($w > $width)
-                {
                     $w = $width;
-                    $h = intval($width * $this->currentHeight / $this->currentWidth);
                 }
 
-                break;
+            break;
         }
 
         if ($w > $this->currentWidth && $h > $this->currentHeight)
