@@ -121,6 +121,11 @@ class ImageEditorGD
                     $h = intval($this->currentHeight / $r);
                     $w = intval($this->currentWidth / $r);
                 }
+                else
+                {
+                    $h = $height;
+                    $w = $width;
+                }
 
             break;
         }
