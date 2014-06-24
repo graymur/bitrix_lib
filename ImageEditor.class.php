@@ -138,6 +138,16 @@ class ImageEditorGD
 
         $image = $this->createEmptyImage($w, $h);
 
+        if ($this->format != 'png' && $this->format != 'gif')
+        {
+//            $bgColor = array(255, 255, 255);
+//            imagefill($image, 0, 0, imagecolorallocate($image, $bgColor[0], $bgColor[1], $bgColor[2]));
+        }
+        else
+        {
+            imagefill($image, 0, 0, imagecolorallocatealpha($image, 0, 0, 0, 127));
+        }
+
         imagecopyresampled(
             $image,
             $this->sourceImage,
