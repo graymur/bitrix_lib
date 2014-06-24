@@ -131,6 +131,19 @@ class ImageEditorGD
                     $h = $this->currentHeight;
                 }
 
+                // foolproof
+                if ($h > $height)
+                {
+                    $h = $height;
+                    $w = intval($height * $this->currentWidth / $this->currentHeight);
+                }
+
+                if ($w > $width)
+                {
+                    $w = $width;
+                    $h = intval($width * $this->currentHeight / $this->currentWidth);
+                }
+
                 break;
         }
 
