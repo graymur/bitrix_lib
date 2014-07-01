@@ -491,7 +491,7 @@ class Cart
             'PAYED' => 'N',
             'CANCELED' => 'N',
             'STATUS_ID' => 'N',
-            'PRICE' => $this->getTotal(),
+            'PRICE' => $this->getTotalDelivery(),
             'CURRENCY' => 'RUB',
             'USER_ID' => $this->getUser()['ID'],
             'PAY_SYSTEM_ID' => $this->getPaymentId(),
@@ -502,8 +502,7 @@ class Cart
 //            'USER_DESCRIPTION' => $this->getUser()['PERSONAL_STREET'],
         );
 
-        $arOrderDat['ORDER_PROP'][3] = $this->getUser()['PERSONAL_MOBILE'];
-        $arOrderDat['ORDER_PROP'][7] = $this->getUser()['PERSONAL_STREET'];
+        $arOrderDat['ORDER_PROP'][3] = $this->getUser()['PERSONAL_PHONE'];
 
         $errors = array();
 
