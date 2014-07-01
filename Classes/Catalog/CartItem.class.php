@@ -90,7 +90,7 @@ class CartItem implements \ArrayAccess
 
     public function getSumWODiscount()
     {
-        return $this->getPrice() * $this->getQuantity();
+        return $this->getOldPrice() * $this->getQuantity();
     }
 
     public function getPrice()
@@ -110,11 +110,13 @@ class CartItem implements \ArrayAccess
 
     public function getDiscountPrice()
     {
-        return \CCatalogProduct::CountPriceWithDiscount(
-            $this['PRICE'],
-            $this['CURRENCY'],
-            $this->getBitrixDiscounts()
-        );
+        return $this['PRICE'];
+    }
+
+    public function getOldPrice()
+    {
+        $product = $this->getProduct();
+        return $product->getOldPrice();
     }
 
     public function getQuantity()
@@ -146,11 +148,12 @@ class CartItem implements \ArrayAccess
 
     public function hasDiscount()
     {
-        return $this->getDiscountPrice() != $this->getPrice();
+        return $this->getOldPrice() != $this->getPrice();
     }
 
     public function getDiscountValue()
     {
-        return $this->getBitrixDiscounts()[0]['VALUE'];
+//        return $this->getBitrixDiscounts()[0]['VALUE'];
+        return $this->hasDiscount() ? 100 - round(100 * $this->getPrice() / $this->getOldPrice()) : false;
     }
 }

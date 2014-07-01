@@ -8,7 +8,9 @@
 namespace Cpeople\Classes\Catalog;
 
 class Product extends \Cpeople\Classes\Block\Object
-{    
+{
+    private $price = null;
+
     function getOffers()
     {
         if (!class_exists('\CCatalogSKU'))
@@ -42,5 +44,72 @@ class Product extends \Cpeople\Classes\Block\Object
     {
         $offers = $this->getOffers();
         return $offers ? $offers[0]->id : $this->id;
+    }
+
+    public function getOldPrice()
+    {
+        return $this->getPriceObj()['PRICE']['PRICE'];
+    }
+
+    public function getCurrency()
+    {
+        return $this->getPriceObj()['PRICE']['CURRENCY'];
+    }
+
+    public function getPrice()
+    {
+        return $this->getPriceObj()['DISCOUNT_PRICE'];
+    }
+
+    public function hasDiscount()
+    {
+        return $this->getPriceObj()['PRICE']['PRICE'] > $this->getPriceObj()['DISCOUNT_PRICE'];
+    }
+
+    public function getDiscountPercent()
+    {
+        return $this->hasDiscount() ? 100 - round(100 * $this->getPrice() / $this->getOldPrice()) : false;
+    }
+
+    public function isForSale()
+    {
+        $price = $this->getPriceObj();
+        return (bool) ($price['DISCOUNT_PRICE'] && $this->getQuantity());
+    }
+
+    public function getQuantity()
+    {
+        if($this->CATALOG_QUANTITY === null)
+        {
+            $this->fillCatalogData();
+        }
+        return $this->CATALOG_QUANTITY;
+    }
+
+    protected function getPriceObj()
+    {
+        if($this->price === null)
+        {
+            $this->price = \CCatalogProduct::GetOptimalPrice($this->ID);
+//            echo '<pre>'.print_r($this->price,true).'</pre>';
+        }
+
+        return $this->price;
+    }
+
+    protected function fillCatalogData()
+    {
+        static $result = array();
+        if(!isset($result[$this->ID]))
+        {
+            $ar = \Cpeople\Classes\Block\Getter::instance()
+                ->setSelectFields(array('ID', 'CATALOG_QUANTITY'))
+                ->getArrayById($this->ID);
+            foreach($ar as $key=>$val)
+            {
+                if($this->data[$key] === null) $this->data[$key] = $val;
+            }
+            $result[$this->ID] = true;
+        }
     }
 }
