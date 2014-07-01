@@ -110,7 +110,13 @@ class CartItem implements \ArrayAccess
 
     public function getDiscountPrice()
     {
-        return $this['PRICE'];
+        $priceObj = \CCatalogProduct::GetOptimalPrice($this->getProduct()->ID, $this->getQuantity());
+        return $priceObj['DISCOUNT_PRICE'];
+        /*return \CCatalogProduct::CountPriceWithDiscount(
+            $this->getOldPrice(),
+            $this['CURRENCY'],
+            $this->getBitrixDiscounts()
+        );*/
     }
 
     public function getOldPrice()
@@ -148,12 +154,12 @@ class CartItem implements \ArrayAccess
 
     public function hasDiscount()
     {
-        return $this->getOldPrice() != $this->getPrice();
+        return $this->getOldPrice() != $this->getDiscountPrice();
     }
 
     public function getDiscountValue()
     {
 //        return $this->getBitrixDiscounts()[0]['VALUE'];
-        return $this->hasDiscount() ? 100 - round(100 * $this->getPrice() / $this->getOldPrice()) : false;
+        return $this->hasDiscount() ? 100 - round(100 * $this->getDiscountPrice() / $this->getOldPrice()) : false;
     }
 }
