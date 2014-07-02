@@ -151,8 +151,7 @@ class CartItem implements \ArrayAccess
     }
 
     public function hasDiscount()
-    {echo '<pre>'.htmlspecialchars(print_r($this->getOldPrice(),true)).'</pre>';
-        echo '<pre>'.htmlspecialchars(print_r($this->getDiscountPrice(),true)).'</pre>';
+    {
         return $this->getOldPrice() > $this->getDiscountPrice();
     }
 
