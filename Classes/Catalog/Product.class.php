@@ -61,6 +61,11 @@ class Product extends \Cpeople\Classes\Block\Object
         return $this->getPriceObj()['DISCOUNT_PRICE'];
     }
 
+    public function getDiscountPrice()
+    {
+        return $this->getPrice();
+    }
+
     public function hasDiscount()
     {
         return $this->getPriceObj()['PRICE']['PRICE'] > $this->getPriceObj()['DISCOUNT_PRICE'];
