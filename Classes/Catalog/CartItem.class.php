@@ -154,7 +154,7 @@ class CartItem implements \ArrayAccess
 
     public function hasDiscount()
     {
-        return $this->getOldPrice() != $this->getDiscountPrice();
+        return $this->getOldPrice() > $this->getDiscountPrice();
     }
 
     public function getDiscountValue()
