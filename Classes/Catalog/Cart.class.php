@@ -170,9 +170,11 @@ class Cart
 
             \CModule::IncludeModule('sale');
 
+            $arFilter = $orderId ? array('ORDER_ID' => $orderId) : array("FUSER_ID" => \CSaleBasket::GetBasketUserID(), 'ORDER_ID' => null);
+
             $dbBasketItems = \CSaleBasket::GetList(
                 array("NAME" => "ASC", "ID" => "ASC"),
-                array("FUSER_ID" => \CSaleBasket::GetBasketUserID(), /*"LID" => SITE_ID,*/ "ORDER_ID" => $orderId),
+                $arFilter,
                 false,
                 false,
                 array()

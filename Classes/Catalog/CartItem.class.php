@@ -160,4 +160,9 @@ class CartItem implements \ArrayAccess
 //        return $this->getBitrixDiscounts()[0]['VALUE'];
         return $this->hasDiscount() ? 100 - round(100 * $this->getDiscountPrice() / $this->getOldPrice()) : false;
     }
+
+    public function getName()
+    {
+        return $this['NAME'];
+    }
 }
