@@ -13,7 +13,7 @@ class Getter extends \Cpeople\Classes\Base\Getter
 
     /**
      * @static
-     * @return Getter|\Cpeople\Classes\Block\Getter|\Cpeople\Classes\Section\Getter
+     * @return Getter
      */
     static function instance()
     {
