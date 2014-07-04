@@ -19,16 +19,46 @@ class Order
         return $orders;
     }
 
+    /**
+     * @param bool $userId
+     * @return self[]
+     */
     public static function getOrdersList($userId = false)
     {
         $arFilter = $userId ? array('USER_ID' => $userId) : array();
+
         $rs = \CSaleOrder::GetList(array('ID' => 'DESC'), $arFilter, false, false, array());
+
         $orders = array();
         while($ar = $rs->GetNext(true, false))
         {
             $orders[] = new static($ar);
         }
+
         return $orders;
+    }
+
+    /**
+     * @param $orderId
+     * @param bool $userId
+     * @return self
+     */
+    public static function getOrderById($orderId, $userId = false)
+    {
+        $arFilter = array('ID' => $orderId);
+        if($userId)
+        {
+            $arFilter['USER_ID'] = $userId;
+        }
+
+        $rs = \CSaleOrder::GetList(array('ID' => 'DESC'), $arFilter, false, false, array());
+
+        if($ar = $rs->GetNext(true, false))
+        {
+            return new static($ar);
+        }
+
+        return false;
     }
 
     public function __construct($data)
@@ -131,9 +161,3 @@ class Order
         return $this->products;
     }
 }
-
-
-
-
-
-
