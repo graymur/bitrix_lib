@@ -89,4 +89,22 @@ class Order implements \ArrayAccess
     {
         return $this->getProperties()['LOCATION'];
     }
+    
+    public function isPayed()
+    {
+        return $this['PAYED'] == 'Y';
+    }
+
+    public function setPayed($value)
+    {
+        $value = (bool) $value ? 'Y' : 'N';
+
+        $data = array(
+            'PAYED' => (bool) $value ? 'Y' : 'N',
+            'DATE_PAYED' => Date(\CDatabase::DateFormatToPHP(\CLang::GetDateFormat('FULL', LANG))),
+            'USER_ID' => $this['USER_ID'],
+        );
+
+        return \CSaleOrder::Update($this['ID'], $data);
+    }
 }
