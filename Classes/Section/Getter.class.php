@@ -9,7 +9,6 @@ class Getter extends \Cpeople\Classes\Base\Getter
     protected $arNavStartParams = null;
     protected $arSelectFields = null;
     protected $bIncCnt = false;
-    protected $byId = false;
 
     /**
      * @static
@@ -18,15 +17,6 @@ class Getter extends \Cpeople\Classes\Base\Getter
     static function instance()
     {
         return new self;
-    }
-
-    /**
-     * @return Getter
-     */
-    public function fetchById($value)
-    {
-        $this->byId = (bool) $value;
-        return $this;
     }
 
     /**
@@ -105,7 +95,7 @@ class Getter extends \Cpeople\Classes\Base\Getter
                 }
             }
 
-            $key = $this->byId ? $section['ID'] : count($retval);
+            $key = $this->hydrateById ? $section['ID'] : count($retval);
 
             switch ($this->hydrationMode)
             {

@@ -65,6 +65,14 @@ abstract class Getter
     /**
      * @return static
      */
+    public function fetchById($value)
+    {
+        return $this->setHydrateById($value);
+    }
+
+    /**
+     * @return static
+     */
     public function setFetchMode($mode)
     {
         $this->fetchMode = (int) $mode;
