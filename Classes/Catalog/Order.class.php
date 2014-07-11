@@ -15,6 +15,12 @@ class Order implements \ArrayAccess
     protected $props;
     protected $propsRaw;
 
+    protected $statusTitles = array(
+        'N' => 'Принят, ожидается оплата',
+        'P' => 'Оплачен, формируется к отправке',
+        'F' => 'Выполнен'
+    );
+
     public function __construct($id)
     {
         if ($id)
@@ -99,12 +105,24 @@ class Order implements \ArrayAccess
     {
         $value = (bool) $value ? 'Y' : 'N';
 
-        $data = array(
-            'PAYED' => (bool) $value ? 'Y' : 'N',
-            'DATE_PAYED' => Date(\CDatabase::DateFormatToPHP(\CLang::GetDateFormat('FULL', LANG))),
-            'USER_ID' => $this['USER_ID'],
-        );
+        if ($value == 'Y')
+        {
+            \CSaleOrder::PayOrder($this['ID'], 'Y');
+        }
+        else
+        {
+            $data = array(
+                'PAYED' => (bool) $value ? 'Y' : 'N',
+                'DATE_PAYED' => Date(\CDatabase::DateFormatToPHP(\CLang::GetDateFormat('FULL', LANG))),
+                'USER_ID' => $this['USER_ID'],
+            );
 
-        return \CSaleOrder::Update($this['ID'], $data);
+            return \CSaleOrder::Update($this['ID'], $data);
+        }
+    }
+
+    public function getStatusString()
+    {
+        return $this->statusTitles[$this['STATUS_ID']];
     }
 }
