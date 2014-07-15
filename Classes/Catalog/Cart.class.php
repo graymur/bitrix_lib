@@ -154,7 +154,8 @@ class Cart
     {
         if ($refresh || !$this->deliveryPrice)
         {
-            $this->deliveryPrice = $this->getCurrentDelivery()['PRICE'];
+            $price = $this->getCurrentDelivery();
+            $this->deliveryPrice = $price['PRICE'];
         }
 
         return $this->deliveryPrice;
@@ -474,9 +475,11 @@ class Cart
     {
         $arErrors = $arWarnings = array();
 
+        $user = $this->getUser();
+
         $arOrderDat = \CSaleOrder::DoCalculateOrder(
             SITE_ID,
-            $this->getUser()['ID'],
+            $user['ID'],
             $this->getItemsRaw(),
             1,
             array(),
@@ -495,7 +498,7 @@ class Cart
             'STATUS_ID' => 'N',
             'PRICE' => $this->getTotalDelivery(),
             'CURRENCY' => 'RUB',
-            'USER_ID' => $this->getUser()['ID'],
+            'USER_ID' => $user['ID'],
             'PAY_SYSTEM_ID' => $this->getPaymentId(),
             'PRICE_DELIVERY' => $this->getDeliveryPrice(),
             'DELIVERY_ID' => $this->getDeliveryId(),
@@ -504,7 +507,7 @@ class Cart
 //            'USER_DESCRIPTION' => $this->getUser()['PERSONAL_STREET'],
         );
 
-        $arOrderDat['ORDER_PROP'][3] = $this->getUser()['PERSONAL_PHONE'];
+        $arOrderDat['ORDER_PROP'][3] = $user['PERSONAL_PHONE'];
 
         $errors = array();
 

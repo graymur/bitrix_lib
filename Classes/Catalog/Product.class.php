@@ -48,17 +48,20 @@ class Product extends \Cpeople\Classes\Block\Object
 
     public function getOldPrice()
     {
-        return $this->getPriceObj()['PRICE']['PRICE'];
+        $priceObj = $this->getPriceObj();
+        return $priceObj['PRICE']['PRICE'];
     }
 
     public function getCurrency()
     {
-        return $this->getPriceObj()['PRICE']['CURRENCY'];
+        $priceObj = $this->getPriceObj();
+        return $priceObj['PRICE']['CURRENCY'];
     }
 
     public function getPrice()
     {
-        return $this->getPriceObj()['DISCOUNT_PRICE'];
+        $priceObj = $this->getPriceObj();
+        return $priceObj['DISCOUNT_PRICE'];
     }
 
     public function getDiscountPrice()
@@ -68,7 +71,8 @@ class Product extends \Cpeople\Classes\Block\Object
 
     public function hasDiscount()
     {
-        return $this->getPriceObj()['PRICE']['PRICE'] > $this->getPriceObj()['DISCOUNT_PRICE'];
+        $priceObj = $this->getPriceObj();
+        return $priceObj['PRICE']['PRICE'] > $priceObj['DISCOUNT_PRICE'];
     }
 
     public function getDiscountPercent()

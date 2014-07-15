@@ -93,7 +93,8 @@ class Order implements \ArrayAccess
 
     public function getLocationId()
     {
-        return $this->getProperties()['LOCATION'];
+        $props = $this->getProperties();
+        return $props['LOCATION'];
     }
     
     public function isPayed()
