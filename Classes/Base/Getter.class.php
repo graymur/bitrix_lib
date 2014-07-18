@@ -238,12 +238,12 @@ abstract class Getter
         {
             if (!$this->cacheManager)
             {
-                throw new Exception;
+                throw new \Exception;
             }
 
             $retval = $this->cacheManager->get($this->getCacheId());
         }
-        catch (Exception $e)
+        catch (\Exception $e)
         {
 
         }
