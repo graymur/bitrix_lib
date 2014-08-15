@@ -152,7 +152,7 @@ class Cart
 
     public function getDeliveryPrice($refresh = false)
     {
-        if ($refresh || !$this->deliveryPrice)
+        if ($refresh || $this->deliveryPrice === null)
         {
             $price = $this->getCurrentDelivery();
             $this->deliveryPrice = $price['PRICE'];
