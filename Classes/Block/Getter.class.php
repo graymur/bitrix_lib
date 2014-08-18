@@ -129,7 +129,6 @@ class Getter extends \Cpeople\Classes\Base\Getter
     {
         if (\Cpeople\Classes\Registry::bitrixCacheEnabled() && ($retval = $this->getCachedResult()))
         {
-            echo '<!-- cached -->';
             return $retval;
         }
 
@@ -222,14 +221,19 @@ class Getter extends \Cpeople\Classes\Base\Getter
         // результата, получаем все элементы и считаем из
         if (true || array_key_exists(0, $this->arFilter))
         {
-            $getter->setNavStartParams(array());
-            $this->total = (int) count(
-                $getter
-                    ->setNavStartParams(array())
-                    ->setFetchMode(self::FETCH_MODE_FIELDS)
-                    ->setHydrationMode(self::HYDRATION_MODE_ARRAY)
-                    ->get()
-            );
+            $getter
+                ->setNavStartParams(array())
+                ->setFetchMode(self::FETCH_MODE_FIELDS)
+                ->setHydrationMode(self::HYDRATION_MODE_ARRAY)
+                ->setSelectFields(array('ID'))
+            ;
+
+            if ($this->cacheManager)
+            {
+                $getter->setCacheManager($this->cacheManager);
+            }
+
+            $this->total = (int) count($getter->get());
         }
         else
         {

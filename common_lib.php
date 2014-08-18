@@ -246,7 +246,7 @@ function checkEmail($email)
 
 function empty_array($array)
 {
-    foreach ($array as $k => $v)
+    foreach ((array) $array as $k => $v)
     {
         if (is_array($v) && !empty_array($v)) return false;
         elseif (!empty($v)) return false;
