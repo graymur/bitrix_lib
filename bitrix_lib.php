@@ -326,9 +326,10 @@ function cp_get_ib_properties($IBlockId)
     if(!isset($result[$IBlockId]))
     {
         $rs = CIBlockProperty::GetList(array('sort'=>'asc'), array('IBLOCK_ID'=>$IBlockId));
+
         while($ar = $rs->Fetch())
         {
-            $result[$IBlockId][$ar['ID']] = $ar;
+//            $result[$IBlockId][$ar['ID']] = $ar;
             $result[$IBlockId][$ar['CODE']] = $ar;
         }
     }
