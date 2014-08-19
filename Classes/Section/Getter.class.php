@@ -9,6 +9,7 @@ class Getter extends \Cpeople\Classes\Base\Getter
     protected $arNavStartParams = null;
     protected $arSelectFields = null;
     protected $bIncCnt = false;
+    protected $bAddUFToSelect = true;
 
     /**
      * @static
@@ -65,6 +66,16 @@ class Getter extends \Cpeople\Classes\Base\Getter
     }
 
     /**
+     * @param $bAddUFToSelect
+     * @return $this
+     */
+    public function setAddUFToSelect($bAddUFToSelect)
+    {
+        $this->bAddUFToSelect = $bAddUFToSelect;
+        return $this;
+    }
+
+    /**
      * @return \Cpeople\Classes\Section\Object[]
      */
     public function get()
@@ -76,7 +87,10 @@ class Getter extends \Cpeople\Classes\Base\Getter
             $this->arSelectFields = array();
         }
 
-        $this->arSelectFields[] = 'UF_*';
+        if($this->bAddUFToSelect)
+        {
+            $this->arSelectFields[] = 'UF_*';
+        }
 
         $resultSet = \CIBlockSection::GetList($this->arOrder, $this->arFilter, $this->bIncCnt, $this->arSelectFields, $this->arNavStartParams);
 
