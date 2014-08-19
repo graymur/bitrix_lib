@@ -11,10 +11,12 @@ namespace Cpeople\Classes\Cache;
 class EngineFiles implements Engine
 {
     private $path;
+    private $defaultTTL = 3600;
 
-    public function __construct($path)
+    public function __construct($path, $defaultTTL = 3600)
     {
         $this->path = $path;
+        $this->defaultTTL = (int) $defaultTTL;
 
         if (!file_exists($this->path))
         {
@@ -24,12 +26,18 @@ class EngineFiles implements Engine
 
     private function getFileName($cacheId)
     {
-        return $this->path . DIRECTORY_SEPARATOR . md5($cacheId) . '.txt';
+        $md5 = md5($cacheId);
+        return $this->path . DIRECTORY_SEPARATOR . substr($md5, 0, 2) . DIRECTORY_SEPARATOR . $md5 . '.txt';
     }
 
     public function valid($cacheId, $ttl = null)
     {
         $retval = true;
+
+        if (empty($ttl))
+        {
+            $ttl = $this->defaultTTL;
+        }
 
         try
         {
@@ -40,12 +48,7 @@ class EngineFiles implements Engine
                 throw new CacheException('file does not exist');
             }
 
-//            if (empty($ttl))
-//            {
-//                throw new CacheException('Cache TTL = 0');
-//            }
-
-            if ($ttl == null && time() - filemtime($file) > $ttl)
+            if (time() - filemtime($file) > $ttl)
             {
                 throw new CacheException('too old');
             }
@@ -62,32 +65,25 @@ class EngineFiles implements Engine
     {
         $file = $this->getFileName($cacheId);
 
+        $dir = dirname($file);
+
+        if (!file_exists($dir))
+        {
+            mkdir($dir, 0777, true);
+        }
+
         if (gettype($data) != 'string')
         {
             $data = serialize($data);
         }
 
-//        if ($cacheId == 'c13d5b1aedce44b5e0e6712874f9545c')
-//        {
-//            dv($file);
-//            dv($data);
-//        }
-
         file_put_contents($file, $data);
-//        $this->check(file_exists($file), 'Could not save cache file');
         chmod($file, 0666);
     }
 
     public function get($cacheId)
     {
         $retval = file_get_contents($this->getFileName($cacheId));
-
-        if ($cacheId == 'c13d5b1aedce44b5e0e6712874f9545c')
-        {
-//            dv($file);
-//            dvv(substr($retval, 0, 2) == 'a:');
-//            dv($retval);
-        }
 
         if (substr($retval, 0, 2) == 'a:')
         {
