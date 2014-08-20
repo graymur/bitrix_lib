@@ -223,6 +223,7 @@ class Getter extends \Cpeople\Classes\Base\Getter
         {
             $getter
                 ->setNavStartParams(array())
+                ->setOrder(array())
                 ->setFetchMode(self::FETCH_MODE_FIELDS)
                 ->setHydrationMode(self::HYDRATION_MODE_ARRAY)
                 ->setSelectFields(array('ID'))
