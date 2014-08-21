@@ -83,6 +83,7 @@ class Registry
 
     static function bitrixCacheEnabled()
     {
+        return true;
         $component = \COption::GetOptionString('main', 'component_cache_on', 'N');
         $managed = \COption::GetOptionString('main', 'component_managed_cache_on', 'N');
 
