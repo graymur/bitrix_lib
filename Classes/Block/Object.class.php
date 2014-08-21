@@ -96,7 +96,7 @@ class Object extends \Cpeople\Classes\Base\Object
         return $prop['VALUE_XML_ID'];
     }
 
-    protected function getImageId($key)
+    protected final function getImageId($key)
     {
         if ($this->hasProp($key))
         {
@@ -110,17 +110,17 @@ class Object extends \Cpeople\Classes\Base\Object
         return $retval;
     }
 
-    public function hasImage($key)
+    public final function hasImage($key)
     {
         return (bool) $this->getImageId($key);
     }
 
-    public function hasFile($key)
+    public final function hasFile($key)
     {
         return $this->hasImage($key);
     }
 
-    public function getFiles($key)
+    public final function getFiles($key)
     {
         $prop = $this->getProp($key);
 
@@ -140,7 +140,7 @@ class Object extends \Cpeople\Classes\Base\Object
         return $retval;
     }
 
-    public function getImages($key)
+    public final function getImages($key)
     {
         $prop = $this->getProp($key);
 
@@ -160,7 +160,7 @@ class Object extends \Cpeople\Classes\Base\Object
         return $retval;
     }
 
-    public function getImageUrl($key)
+    public final function getImageUrl($key)
     {
         if (!$this->hasImage($key))
         {
@@ -178,7 +178,7 @@ class Object extends \Cpeople\Classes\Base\Object
         return $this->imagesSrc[$key];
     }
 
-    public function getFile($key)
+    public final function getFile($key)
     {
         if (!$this->hasImage($key))
         {
