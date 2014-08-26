@@ -525,4 +525,29 @@ class Cart
         $this->setDeliveryPrice($order['PRICE_DELIVERY']);
         $this->setLocationId($order->getLocationId());
     }
+
+    public function in($productId)
+    {
+        return (bool) $this->getItemByProductId($productId);
+    }
+
+    /**
+     * @param $productId
+     * @return \Cpeople\Classes\Catalog\CartItem
+     */
+    public function getItemByProductId($productId)
+    {
+        if ($items = $this->getItems())
+        {
+            foreach ($items as $item)
+            {
+                if ($item['PRODUCT_ID'] == $productId)
+                {
+                    return $item;
+                }
+            }
+        }
+
+        return false;
+    }
 }
