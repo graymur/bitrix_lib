@@ -253,8 +253,13 @@ class Getter extends \Cpeople\Classes\Base\Getter
     /**
      * @return \paging
      */
-    public function getPagingObject($urlTemplate)
+    public function getPagingObject($urlTemplate, $total = null)
     {
+        if (isset($total))
+        {
+            $this->total = $total;
+        }
+
         if (!isset($this->total))
         {
             $this->total = $this->getFoundRows();
