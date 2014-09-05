@@ -10,6 +10,7 @@ class Getter extends \Cpeople\Classes\Base\Getter
     protected $arSelectFields = null;
     protected $bIncCnt = false;
     protected $bAddUFToSelect = true;
+    protected $className = '\Cpeople\Classes\Section\Object';
 
     /**
      * @static
@@ -80,6 +81,11 @@ class Getter extends \Cpeople\Classes\Base\Getter
      */
     public function get()
     {
+        if (\Cpeople\Classes\Registry::bitrixCacheEnabled() && ($retval = $this->getCachedResult()))
+        {
+            return $retval;
+        }
+
         $retval = array();
 
         if (!is_array($this->arSelectFields))
@@ -114,7 +120,9 @@ class Getter extends \Cpeople\Classes\Base\Getter
             switch ($this->hydrationMode)
             {
                 case self::HYDRATION_MODE_OBJECTS_ARRAY:
-                    $retval[$key] = new Object($section);
+                    $className = $this->className;
+                    $retval[$key] = new $className($section);
+//                    $retval[$key] = new Object($section);
                 break;
 
 
@@ -122,6 +130,11 @@ class Getter extends \Cpeople\Classes\Base\Getter
                     $retval[$key] = $section;
                 break;
             }
+        }
+
+        if (\Cpeople\Classes\Registry::bitrixCacheEnabled())
+        {
+            $this->cacheResult($retval);
         }
 
         return $retval;
