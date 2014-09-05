@@ -252,7 +252,7 @@ class Object extends \Cpeople\Classes\Base\Object
 
     public function getActiveToDate($format)
     {
-        return $this->getDate('DATE_ACTIVE_TO', $format);
+        return $this->getDate('ACTIVE_TO', $format);
     }
 
     public function getUrl()
