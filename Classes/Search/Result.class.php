@@ -56,7 +56,7 @@ class Result
         return FormatDate($format, strtotime($this->data['DATE_CHANGE']));
     }
 
-    public function getBodyHighlighted($keywords = null, $wordsAround = 5, $tag = '<b>', $delimiter = ' &hellip; ')
+    public function getBodyHighlighted($keywords = null, $wordsAround = 5, $tag = '<b>', $delimiter = ' &hellip; ', $maxMatchesNum = NULL)
     {
         if (!is_array($keywords))
         {
@@ -97,6 +97,11 @@ class Result
             }
 
             $prev = $i;
+        }
+
+        if($maxMatchesNum)
+        {
+            $matches = array_slice($matches, 0, $maxMatchesNum);
         }
 
         return join($delimiter, $matches);
