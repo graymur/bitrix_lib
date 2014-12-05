@@ -52,6 +52,8 @@ class EmailCommand extends Command
             }
         }
 
+        $mail->CharSet = 'utf-8';
+
         $result = $mail->send();
 
         if(!$result && $this->isCritical)
