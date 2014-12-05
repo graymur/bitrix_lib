@@ -69,4 +69,10 @@ class Object extends \Cpeople\Classes\Base\Object
 
         return $this->fields;
     }
+
+    public function addProperty($propData)
+    {
+        $ibp = new \CIBlockProperty;
+        return (bool) $ibp->Add($propData);
+    }
 }

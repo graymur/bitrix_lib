@@ -52,4 +52,9 @@ class Object
     {
         return htmlspecialchars($this->{$name});
     }
+
+    public function getData()
+    {
+        return $this->data;
+    }
 } 
