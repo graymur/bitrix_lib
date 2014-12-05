@@ -242,7 +242,14 @@ class Object extends \Cpeople\Classes\Base\Object
 
     protected function getDate($key, $format)
     {
-        return FormatDate($format, strtotime($this->data[$key]));
+        if(is_array($this->data[$key]))
+        {
+            return FormatDate($format, strtotime($this->data[$key]['VALUE']));
+        }
+        else
+        {
+            return FormatDate($format, strtotime($this->data[$key]));
+        }
     }
 
     public function getActiveFromDate($format)
