@@ -383,3 +383,27 @@ function cp_group_by_section($iblocks, $level = 0)
 
     return $sections;
 }
+
+function cp_get_iblock_dates($filter = array())
+{
+    $dates = array();
+
+    \Cpeople\Classes\Block\Getter::instance()
+        ->setOrder(array('DATE_ACTIVE_FROM' => 'DESC'))
+        ->setFilter($filter)
+        ->setHydrationMode(\Cpeople\Classes\Block\Getter::HYDRATION_MODE_ARRAY)
+        ->setSelectFields(array('DATE_ACTIVE_FROM'))
+        ->addCallback(function ($element) use(&$dates) {
+            $timestamp = strtotime($element['ACTIVE_FROM']);
+            $dates[date('Y', $timestamp)][date('n', $timestamp)]++;
+        })
+        ->get();
+
+    return $dates;
+}
+
+function cp_month_name($month, $format)
+{
+    $timestamp = mktime(1,1,1, $month, 1, date('Y'));
+    return date($format, $timestamp);
+}
