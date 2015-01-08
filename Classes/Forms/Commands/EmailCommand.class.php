@@ -8,7 +8,6 @@
 
 namespace Cpeople\Classes\Forms\Commands;
 
-
 use Cpeople\Classes\Forms\Command;
 use Cpeople\Classes\Forms\Form;
 
@@ -22,6 +21,18 @@ class EmailCommand extends Command
     protected $body_template;
     protected $data;
     protected $files;
+
+    /**
+     * @param $isCritical
+     * @param $body
+     * @param array $to
+     * @param array $from
+     * @param null $subject
+     * @param array $files
+     *
+     * TODO: https://php.net/manual/ru/function.array-replace.php - передавать опции массивом, использовать array_replace для дефолтных значений
+     * TODO: передавать объект PHPMailer, а не хардкодить путь к нему
+     */
 
     public function __construct($isCritical, $body,Array $to = array(), Array $from = array(), $subject = NULL, Array $files = array())
     {
