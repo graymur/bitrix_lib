@@ -34,17 +34,25 @@ class EmailCommand extends Command
      * TODO: передавать объект PHPMailer, а не хардкодить путь к нему
      */
 
-    public function __construct($isCritical, $body,Array $to = array(), Array $from = array(), $subject = NULL, Array $files = array())
+    public function __construct($isCritical, \PHPMailer $phpMailer, $options)
     {
         parent::__construct($isCritical);
-        $this->to            = $to ? $to : array(cp_get_site_email());
-        $this->from          = $from ? $from : array("noreply@{$_SERVER['HTTP_HOST']}");
-        $this->subject       = @coalesce($subject, 'Сообщение на ' . $_SERVER['HTTP_HOST']);
-        $this->body_template = $body;
-        $this->files         = $files;
+        $this->mailer = $phpMailer;
 
-        require_once $_SERVER['DOCUMENT_ROOT'] . '/lib/php-mailer/PHPMailerAutoload.php';
-        $this->mailer = new \PHPMailer();
+        $defaultOptions = array(
+            'to' => array(cp_get_site_email()),
+            'from' => array("noreply@{$_SERVER['HTTP_HOST']}"),
+            'subject' => 'Сообщение на ' . $_SERVER['HTTP_HOST'],
+            'body' => '',
+            'files' => array()
+        );
+
+        $options = array_replace($defaultOptions, $options);
+        $this->to = $options['to'];
+        $this->from = $options['from'];
+        $this->subject = $options['subject'];
+        $this->body_template = $options['body'];
+        $this->files = $options['files'];
     }
 
     public function execute(Form $form)
