@@ -112,6 +112,8 @@ function cp_get_site_name()
 
 function cp_get_thumb_url($url, $options = array())
 {
+    $initialUrl = $url;
+
     if (!empty($options))
     {
         $url_part = '/';
@@ -128,7 +130,107 @@ function cp_get_thumb_url($url, $options = array())
         $url = '/' . basename(IMG_CACHE_PATH) . $url . '?' . cp_thumb_url_hash($url);
     }
 
+    if (defined('CP_GET_THUMB_URL_GENERATE') && CP_GET_THUMB_URL_GENERATE)
+    {
+        cp_generate_thumb($initialUrl, $url, $options);
+    }
+
     return $url;
+}
+
+function cp_generate_thumb($url, $resizedUrl, $options)
+{
+    try
+    {
+        $sourcePath = BASE_PATH . $url;
+        $targetPath = BASE_PATH . preg_replace('#(\?.*)#', '', $resizedUrl);
+        $targetDir = dirname($targetPath);
+
+        if (file_exists($targetPath))
+        {
+            throw new Exception('Already exists');
+        }
+
+        if (!file_exists($sourcePath))
+        {
+            throw new Exception('Source not found');
+        }
+
+        if (!file_exists($targetDir))
+        {
+            mkdir($targetDir, 0777, true);
+        }
+
+        if (!file_exists($targetDir))
+        {
+            throw new Exception('Could not create cache dir');
+        }
+
+        if (!class_exists('ImageEditorGD'))
+        {
+            require_once BASE_PATH . '/lib/Cpeople/ImageEditor.class.php';
+        }
+
+        $IE = new ImageEditorGD();
+
+        $IE->setSource($sourcePath)->setTarget($targetPath);
+
+        $size = @coalesce($options['size'], $options['width']);
+
+        switch (@$options['type'])
+        {
+            case 'square':
+                $IE->square($size);
+                break;
+
+            case 'square_put':
+                $IE->putIntoSquare($size);
+                break;
+
+            case 'put':
+                if (empty($options['width'])) throw new Exception('Width is not set for method PUT');
+                if (empty($options['height'])) throw new Exception('Height is not set for method PUT');
+
+                $IE->putIntoSize($options['width'], $options['height']);
+                break;
+
+            case 'put_out':
+                if (empty($options['width'])) throw new Exception('Width is not set for method PUT');
+                if (empty($options['height'])) throw new Exception('Height is not set for method PUT');
+
+                $IE->cutIntoSize($options['width'], $options['height']);
+                break;
+
+            default:
+
+                if (empty($options['width']))
+                {
+                    $mode = IMAGE_EDITOR_RESIZE_HEIGHT;
+                }
+                else if (empty($options['height']))
+                {
+                    $mode = IMAGE_EDITOR_RESIZE_WIDTH;
+                }
+                else
+                {
+                    $mode = @coalesce($options['mode'], IMAGE_EDITOR_RESIZE_PROPORTIONAL);
+                }
+
+                $thumb_width    = (int) @coalesce($options['width'], $options['height']);
+                $thumb_height   = (int) @coalesce($options['height'], $options['width']);
+
+                $IE->resize($thumb_width, $thumb_height, $mode);
+
+                break;
+        }
+
+        $IE->commit();
+
+    }
+    catch (Exception $e)
+    {
+//        dv( 'cp_generate_thumb: ' . $e->getMessage());
+    }
 }
 
 function cp_bitrix_date($format, $date)
