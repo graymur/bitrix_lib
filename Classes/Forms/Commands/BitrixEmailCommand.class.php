@@ -16,17 +16,19 @@ class BitrixEmailCommand extends Command
 {
     private $emailEvent;
     private $fieldsUppercase;
+    private $siteId;
     /**
      * @var Form
      */
     private $form;
 
-    public function __construct($isCritical, $emailEvent, $fieldsUppercase = TRUE)
+    public function __construct($isCritical, $emailEvent, $fieldsUppercase = TRUE, $siteId = SITE_ID)
     {
         parent::__construct($isCritical);
 
         $this->emailEvent = $emailEvent;
         $this->fieldsUppercase = $fieldsUppercase;
+        $this->siteId = $siteId;
     }
 
     public function execute(Form $form)
@@ -38,7 +40,7 @@ class BitrixEmailCommand extends Command
             $submitArray  = array_change_key_case($sendData, CASE_UPPER);
         }
 
-        $result = \CEvent::Send($this->emailEvent, SITE_ID, $submitArray);
+        $result = \CEvent::Send($this->emailEvent, $this->siteId, $submitArray);
         if(!$result && $this->isCritical)
         {
             throw new \Exception('CEvent::Send false');
