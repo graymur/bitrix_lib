@@ -61,7 +61,7 @@ try
         throw new Exception('Wrong protection code');
     }
 
-    $excepted_params = array('w', 'h', 't', 'm', 's', 'e');
+    $excepted_params = array('w', 'h', 't', 'm', 's', 'e', 'b');
     $params = array();
 
     $temp = explode('-', $path[0]);
@@ -188,6 +188,11 @@ try
 
                 break;
             }
+
+			if(isset($params['b']) && $params['b'])
+			{
+				$IE->blurred();
+			}
 
             $IE->/*sharpen()->*/commit();
         }

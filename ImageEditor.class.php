@@ -209,6 +209,13 @@ class ImageEditorGD
         return $this;
     }
 
+	public function blurred()
+	{
+		imagefilter($this->sourceImage, IMG_FILTER_GAUSSIAN_BLUR);
+
+		return $this;
+	}
+
     /**
      * @param int $size
      * @return ImageEditorGD $instance
