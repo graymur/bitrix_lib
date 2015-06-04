@@ -209,10 +209,13 @@ class ImageEditorGD
         return $this;
     }
 
-	public function blurred()
+	public function blurred($rounds)
 	{
-		imagefilter($this->sourceImage, IMG_FILTER_GAUSSIAN_BLUR);
-
+		for($i = 0; $i < $rounds; $i++)
+		{
+			imagefilter($this->sourceImage, IMG_FILTER_GAUSSIAN_BLUR);
+		}
+		
 		return $this;
 	}
 

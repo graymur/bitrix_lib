@@ -191,7 +191,7 @@ try
 
 			if(isset($params['b']) && $params['b'])
 			{
-				$IE->blurred();
+				$IE->blurred((int) $params['b']);
 			}
 
             $IE->/*sharpen()->*/commit();
