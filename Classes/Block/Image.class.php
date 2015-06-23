@@ -20,4 +20,14 @@ class Image extends File
     {
         return call_user_func($this->thumbFunc, $this->fetchSrc(), $options);
     }
+
+    public function getWidth()
+    {
+        return $this->data['WIDTH'];
+    }
+
+    public function getHeight()
+    {
+        return $this->data['HEIGHT'];
+    }
 }
