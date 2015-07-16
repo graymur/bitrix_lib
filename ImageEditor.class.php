@@ -220,6 +220,17 @@ class ImageEditorGD
 	}
 
     /**
+     * @param int $range
+     * @return ImageEditorGD $instance
+     */
+    public function brightness($range)
+    {
+        imagefilter($this->sourceImage, IMG_FILTER_BRIGHTNESS, $range);
+
+        return $this;
+    }
+
+    /**
      * @param int $size
      * @return ImageEditorGD $instance
      */
