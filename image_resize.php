@@ -61,7 +61,7 @@ try
         throw new Exception('Wrong protection code');
     }
 
-    $excepted_params = array('w', 'h', 't', 'm', 's', 'e', 'b', 'r');
+    $excepted_params = array('w', 'h', 't', 'm', 's', 'e', 'b', 'd');
     $params = array();
 
     $temp = explode('-', $path[0]);
@@ -194,9 +194,9 @@ try
 				$IE->blurred((int) $params['b']);
 			}
 
-            if(isset($params['r']) && $params['r'])
+            if(isset($params['d']) && $params['d'])
             {
-                $IE->brightness((int) $params['r']);
+                $IE->decreaseBrightness((int) $params['d']);
             }
 
             $IE->/*sharpen()->*/commit();

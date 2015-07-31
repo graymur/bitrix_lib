@@ -223,9 +223,9 @@ class ImageEditorGD
      * @param int $range
      * @return ImageEditorGD $instance
      */
-    public function brightness($range)
+    public function decreaseBrightness($range)
     {
-        imagefilter($this->sourceImage, IMG_FILTER_BRIGHTNESS, $range);
+        imagefilter($this->sourceImage, IMG_FILTER_BRIGHTNESS, -$range);
 
         return $this;
     }
