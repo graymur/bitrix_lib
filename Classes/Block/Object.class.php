@@ -120,6 +120,9 @@ class Object extends \Cpeople\Classes\Base\Object
         return $this->hasImage($key);
     }
 
+    /**
+     * @return \Cpeople\Classes\Block\File[]
+     */
     public final function getFiles($key)
     {
         $prop = $this->getProp($key);
@@ -140,6 +143,9 @@ class Object extends \Cpeople\Classes\Base\Object
         return $retval;
     }
 
+    /**
+     * @return \Cpeople\Classes\Block\Image[]
+     */
     public final function getImages($key)
     {
         $prop = $this->getProp($key);
