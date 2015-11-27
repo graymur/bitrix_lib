@@ -128,10 +128,20 @@ class Object extends \Cpeople\Classes\Base\Object
 
         if (!empty($prop['VALUE']))
         {
-            for ($i = 0, $c = count($prop['VALUE']); $i < $c; $i++)
+            if (is_array($prop['VALUE']))
             {
-                $file = File::fromId($prop['VALUE'][$i]);
-                $file->setName($prop['DESCRIPTION'][$i]);
+                for ($i = 0, $c = count($prop['VALUE']); $i < $c; $i++)
+                {
+                    $file = File::fromId($prop['VALUE'][$i]);
+                    $file->setName($prop['DESCRIPTION'][$i]);
+
+                    $retval[] = $file;
+                }
+            }
+            else
+            {
+                $file = File::fromId($prop['VALUE']);
+                $file->setName($prop['DESCRIPTION']);
 
                 $retval[] = $file;
             }
@@ -143,7 +153,6 @@ class Object extends \Cpeople\Classes\Base\Object
     public final function getImages($key)
     {
         $prop = $this->getProp($key);
-
         $retval = false;
 
         if (!empty($prop['VALUE']))
