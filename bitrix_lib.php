@@ -52,7 +52,7 @@ function cp_get_language_message($key, $special = false)
 
         if (file_exists($langFilePath) && ($content = file_get_contents($langFilePath)))
         {
-            $string = "'" . addslashes($key) . "'";
+            $string = "'" . str_replace("'", "\\'", $key) . "'";
             $content = str_replace('?>', '', $content);
             $content = str_replace(');', "    $string => $string,\n);", $content);
             file_put_contents($langFilePath, $content);
