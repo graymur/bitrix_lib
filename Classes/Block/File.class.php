@@ -9,7 +9,7 @@ namespace Cpeople\Classes\Block;
 
 class File
 {
-    private $data;
+    protected $data;
     private $src;
     private $name;
 

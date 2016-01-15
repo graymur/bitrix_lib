@@ -8,7 +8,6 @@
 
 namespace Cpeople\Classes\Forms\Commands;
 
-
 use Cpeople\Classes\Forms\Command;
 use Cpeople\Classes\Forms\Form;
 
@@ -23,17 +22,37 @@ class EmailCommand extends Command
     protected $data;
     protected $files;
 
-    public function __construct($isCritical, $body,Array $to = array(), Array $from = array(), $subject = NULL, Array $files = array())
+    /**
+     * @param $isCritical
+     * @param $body
+     * @param array $to
+     * @param array $from
+     * @param null $subject
+     * @param array $files
+     *
+     * TODO: https://php.net/manual/ru/function.array-replace.php - передавать опции массивом, использовать array_replace для дефолтных значений
+     * TODO: передавать объект PHPMailer, а не хардкодить путь к нему
+     */
+
+    public function __construct($isCritical, \PHPMailer $phpMailer, $options)
     {
         parent::__construct($isCritical);
-        $this->to            = $to ? $to : array(cp_get_site_email());
-        $this->from          = $from ? $from : array("noreply@{$_SERVER['HTTP_HOST']}");
-        $this->subject       = @coalesce($subject, 'Сообщение на ' . $_SERVER['HTTP_HOST']);
-        $this->body_template = $body;
-        $this->files         = $files;
+        $this->mailer = $phpMailer;
 
-        require_once $_SERVER['DOCUMENT_ROOT'] . '/lib/php-mailer/PHPMailerAutoload.php';
-        $this->mailer = new \PHPMailer();
+        $defaultOptions = array(
+            'to' => array(cp_get_site_email()),
+            'from' => array("noreply@{$_SERVER['HTTP_HOST']}"),
+            'subject' => 'Сообщение на ' . $_SERVER['HTTP_HOST'],
+            'body' => '',
+            'files' => array()
+        );
+
+        $options = array_replace($defaultOptions, $options);
+        $this->to = $options['to'];
+        $this->from = $options['from'];
+        $this->subject = $options['subject'];
+        $this->body_template = $options['body'];
+        $this->files = $options['files'];
     }
 
     public function execute(Form $form)

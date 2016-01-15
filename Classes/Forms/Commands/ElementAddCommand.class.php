@@ -17,6 +17,7 @@ class ElementAddCommand extends Command
     private $iBlockId;
     private $elementName;
     private $fieldsUppercase;
+    private $bitrixFields;
     /**
      * @var Form
      */
@@ -31,13 +32,14 @@ class ElementAddCommand extends Command
         $form->setDataItem('ID', $id);
     }
 
-    public function __construct($isCritical, $iBlockId, $elementName = NULL, $fieldsUppercase = TRUE)
+    public function __construct($isCritical, $iBlockId, $elementName = NULL, $fieldsUppercase = TRUE, Array $bitrixFields = array())
     {
         parent::__construct($isCritical);
 
         $this->iBlockId = $iBlockId;
         $this->elementName = $elementName;
         $this->fieldsUppercase = $fieldsUppercase;
+        $this->bitrixFields = $bitrixFields;
     }
 
     public function getPreparedProperties()
@@ -94,12 +96,19 @@ class ElementAddCommand extends Command
 
         $el = new \CIBlockElement;
 
-        $id = $el->Add(array(
+        $props = array(
             'IBLOCK_ID'         => $this->iBlockId,
             'PROPERTY_VALUES'   => $elementsProperties,
             'NAME'              => $this->elementName,
             "DATE_ACTIVE_FROM"  => ConvertTimeStamp(time(), "FULL")
-        ));
+        );
+
+        foreach($this->bitrixFields as $keyField => $valField)
+        {
+            $props[$keyField] = $valField;
+        }
+
+        $id = $el->Add($props);
 
         if (!$id)
         {

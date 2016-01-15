@@ -209,6 +209,27 @@ class ImageEditorGD
         return $this;
     }
 
+	public function blurred($rounds)
+	{
+		for($i = 0; $i < $rounds; $i++)
+		{
+			imagefilter($this->sourceImage, IMG_FILTER_GAUSSIAN_BLUR);
+		}
+		
+		return $this;
+	}
+
+    /**
+     * @param int $range
+     * @return ImageEditorGD $instance
+     */
+    public function decreaseBrightness($range)
+    {
+        imagefilter($this->sourceImage, IMG_FILTER_BRIGHTNESS, -$range);
+
+        return $this;
+    }
+
     /**
      * @param int $size
      * @return ImageEditorGD $instance

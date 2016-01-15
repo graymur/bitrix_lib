@@ -26,6 +26,11 @@ trait MultilangFields
         return $this->getPropDescription($this->getCurrentLanguageKey() . '_' . $key);
     }
 
+    public function hasLangProp($key)
+    {
+        return $this->hasProp($this->getCurrentLanguageKey() . '_' . $key);
+    }
+
     private function fetchSites()
     {
         if (!isset($this->sites))

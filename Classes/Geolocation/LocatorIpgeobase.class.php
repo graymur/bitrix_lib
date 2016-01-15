@@ -37,7 +37,7 @@ class LocatorIpgeobase extends Locator
                 throw new \Exception('Bad response, ' . __METHOD__);
             }
 
-            if ((string) $xml->ip->city == '')
+            if ((string) $xml->ip->country == '')
             {
                 throw new \Exception('Bad XML, ' . __METHOD__);
             }
